@@ -141,3 +141,248 @@ EOF
 
 
 Default Deny
+GlobalNetworkPolicy 
+apply across all namespaces with single default-deny policy
+
+
+calicoctl
+utility used to create and manage Calico resource types
+plus run range of other Calico specific commands
+e.g.
+GlobalNetworkPolicy
+
+
+cat <<EOF | calicoctl apply -f -
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: default-app-policy
+spec:
+  namespaceSelector: has(projectcalico.org/name) && projectcalico.org/name not in {"kube-system", "calico-system"}
+  types:
+  - Ingress
+  - Egress
+EOF
+
+
+ignore "kube-system", "calico-system" namespaces because don't want policy to 
+impact the Kubernetes or Calico control planes
+
+
+kubectl exec -ti $CUSTOMER_POD -n yaobank -c customer -- /bin/bash
+
+dig www.google.com
+; <<>> DiG 9.10.3-P4-Ubuntu <<>> www.google.com
+;; global options: +cmd
+;; connection timed out; no servers could be reached
+
+exit
+
+
+
+Allow DNS
+
+cat <<EOF | calicoctl apply -f -
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: default-app-policy
+spec:
+  namespaceSelector: has(projectcalico.org/name) && projectcalico.org/name not in {"kube-system", "calico-system"}
+  types:
+  - Ingress
+  - Egress
+  egress:
+    - action: Allow
+      protocol: UDP
+      destination:
+        selector: k8s-app == "kube-dns"
+        ports:
+          - 53
+EOF
+
+
+kubectl exec -ti $CUSTOMER_POD -n yaobank -c customer -- /bin/bash
+
+
+root@customer-574bd6cc75-77tw4:/app# dig www.google.com
+
+; <<>> DiG 9.10.3-P4-Ubuntu <<>> www.google.com
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 27398
+;; flags: qr rd ra; QUERY: 1, ANSWER: 6, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 4096
+;; QUESTION SECTION:
+;www.google.com.			IN	A
+
+;; ANSWER SECTION:
+www.google.com.		30	IN	A	74.125.193.105
+www.google.com.		30	IN	A	74.125.193.99
+www.google.com.		30	IN	A	74.125.193.147
+www.google.com.		30	IN	A	74.125.193.104
+www.google.com.		30	IN	A	74.125.193.103
+www.google.com.		30	IN	A	74.125.193.106
+
+;; Query time: 8 msec
+;; SERVER: 198.19.32.10#53(198.19.32.10)
+;; WHEN: Thu Jul 01 17:37:03 UTC 2021
+;; MSG SIZE  rcvd: 223
+
+root@customer-574bd6cc75-77tw4:/app# 
+
+
+
+Add remaining network policies
+curl --connect-timeout 3 198.19.0.1:30180
+
+timeout
+e.g.
+customer and summary pods
+
+
+
+
+cat <<EOF | kubectl apply -f - 
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: customer-policy
+  namespace: yaobank
+spec:
+  podSelector:
+    matchLabels:
+      app: customer
+  ingress:
+    - ports:
+      - protocol: TCP
+        port: 80
+  egress:
+    - to: []
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: summary-policy
+  namespace: yaobank
+spec:
+  podSelector:
+    matchLabels:
+      app: summary
+  ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            app: customer
+      ports:
+      - protocol: TCP
+        port: 80
+  egress:
+    - to:
+      - podSelector:
+          matchLabels:
+            app: database
+      ports:
+      - protocol: TCP
+        port: 2379
+EOF
+
+curl 198.19.0.1:30180
+
+
+Lazy policy
+allows all pod egress even to the internet
+ping -c 3 8.8.8.8
+
+ping -c 3 8.8.8.8
+curl --connect-timeout 3 -I www.google.com
+
+exit
+
+
+Lockdown cluster egress
+cat <<EOF | calicoctl apply -f -
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: egress-lockdown
+spec:
+  order: 600
+  namespaceSelector: has(projectcalico.org/name) && projectcalico.org/name not in {"kube-system", "calico-system"}
+  serviceAccountSelector: internet-egress not in {"allowed"}
+  types:
+  - Egress
+  egress:
+    - action: Deny
+      destination:
+        notNets:
+          - 10.0.0.0/8
+          - 172.16.0.0/12
+          - 192.168.0.0/16
+          - 198.18.0.0/15
+EOF
+
+
+The networks referenced in the manifest above are defined by RFC5735, which is a superset of RFC1918.
+
+
+ubuntu@host1:~$ kubectl exec -it $CUSTOMER_POD -n yaobank -c customer -- /bin/bash
+root@customer-574bd6cc75-77tw4:/app# ping -c 3 8.8.8.8
+PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
+
+--- 8.8.8.8 ping statistics ---
+3 packets transmitted, 0 received, 100% packet loss, time 2028ms
+
+root@customer-574bd6cc75-77tw4:/app# curl --connect-timeout 3 -I www.google.com
+curl: (28) Connection timed out after 3000 milliseconds
+
+
+Grant Selective cluster egress
+kubectl label serviceaccount -n yaobank customer internet-egress=allowed
+
+above commands working again
+
+
+Managing trust among teams
+Kubernetes RBAC
+
+
+Pods, Namespaces, and Service Accounts, Kubernetes Network Policies, Calico Network Policies, and Calico Global Network Policies, all have separate RBAC controls
+
+support preferred level of shift-left security practices
+delegating different levels of security trust to dev or other teams
+
+
+
+Protect Kubernetes Nodes
+nc -w 3 198.19.0.1 21
+220 (vsFTPd 3.0.3)
+
+
+Host endpoints are non-namespaced
+https://courses.academy.tigera.io/courses/course-v1:tigera+CCO-L1+CCO-L1-2020/courseware/6b2f1c92019f42af9abd3fa3d51e037d/b7b0384d13814260bef8251e22bcf99d/?activate_block_id=block-v1%3Atigera%2BCCO-L1%2BCCO-L1-2020%2Btype%40sequential%2Bblock%40b7b0384d13814260bef8251e22bcf99d
+
+
+cat <<EOF| calicoctl apply -f -
+---
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: default-node-policy
+spec:
+  selector: has(kubernetes.io/hostname)
+  ingress:
+  - action: Allow
+    protocol: TCP
+    source:
+      nets:
+      - 127.0.0.1/32
+  - action: Allow
+    protocol: UDP
+    source:
+      nets:
+      - 127.0.0.1/32
+EOF
