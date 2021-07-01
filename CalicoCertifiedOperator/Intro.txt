@@ -1,0 +1,16 @@
+INTRO
+29/06/2021
+
+ https://slack.projectcalico.org
+ #academy
+ 
+ 
+ Last spot
+ https://courses.academy.tigera.io/courses/course-v1:tigera+CCO-L1+CCO-L1-2020/courseware/34335c1507344450bbda775dd4460119/bf1560778a764aeaada7bb423860bcce/?child=first
+ 
+ 
+Lab
+Control (198.19.0.1) - Kubernetes control-plane node
+Node1 (198.19.0.2) - Kubernetes worker node
+Node2 (198.19.0.3) - Kubernetes worker node
+Host1 (198.19.15.254) - General purpose host

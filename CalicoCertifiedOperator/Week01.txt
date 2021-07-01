@@ -1,0 +1,185 @@
+Weekk01
+29/06/2021
+ 
+ 
+LAB
+Control (198.19.0.1) 		- Kubernetes control-plane node
+Node1   (198.19.0.2) 		- Kubernetes worker node
+Node2   (198.19.0.3) 		- Kubernetes worker node
+Host1   (198.19.15.254) 	- General purpose host
+
+
+Kubernetes cluster
+Control		master
+Node1			worker
+Node2			worker
+
+Host1			client		outside cluster
+
+
+Local workstation
+Linux with Snapcraft
+installed on Ubuntu 20.04
+
+
+Multiplass
+https://multipass.run
+
+sudo snap install multipass
+multipass launch --name foo
+multipass exec foo -- lsb_release -a
+
+multipass launch -n bar --cloud-init cloud-config.yaml
+// couldn't get working as couldn't find concrete yaml
+https://cloudinit.readthedocs.io/en/latest/topics/examples.html
+
+multipass stop foo
+multipass delete foo
+multipass purge
+
+Restart
+https://courses.academy.tigera.io/courses/course-v1:tigera+CCO-L1+CCO-L1-2020/courseware/34335c1507344450bbda775dd4460119/bf1560778a764aeaada7bb423860bcce/?child=first
+
+See option to open Multipass top right
+but the terminal is too small so instead launch std terminal
+multipass shell
+
+
+Create the lab environment
+
+curl https://raw.githubusercontent.com/tigera/ccol1/main/control-init.yaml | multipass launch -n control -m 2048M 20.04 --cloud-init -
+curl https://raw.githubusercontent.com/tigera/ccol1/main/node1-init.yaml | multipass launch -n node1 20.04 --cloud-init -
+curl https://raw.githubusercontent.com/tigera/ccol1/main/node2-init.yaml | multipass launch -n node2 20.04 --cloud-init -
+curl https://raw.githubusercontent.com/tigera/ccol1/main/host1-init.yaml | multipass launch -n host1 20.04 --cloud-init -
+
+
+multipass shell host1
+kubectl get nodes -A
+
+NotReady
+because we have not installed the CNI plugin to provide networking
+
+host1
+primary entry point
+
+other instances acting as the cluster in the cloud
+
+
+4x different ways to install Calico
+Manifest
+Operator
+Managed Kubernetes Services
+Kubernets Installers + Distros
+
+
+Install Calico
+multipass shell host1
+
+kubectl create -f https://docs.projectcalico.org/archive/v3.16/manifests/tigera-operator.yaml
+
+kubectl get pods -n tigera-operator
+
+cat <<EOF | kubectl apply -f -
+apiVersion: operator.tigera.io/v1
+kind: Installation
+metadata:
+  name: default
+spec:
+  calicoNetwork:
+    containerIPForwarding: Enabled
+    ipPools:
+    - cidr: 198.19.16.0/21
+      natOutgoing: Enabled
+      encapsulation: None
+EOF
+
+
+Validate installation
+kubectl get tigerastatus/calico
+
+kubectl get pods -A
+kubectl get pods -n calico-system
+
+
+Calico-node
+runs on every K8s cluster node as a Daemonset
+enforces network policy, setup routes on nodes, managing virtual interfaces
+e.g. VXLAN or WireGuard
+
+
+calico-typha
+stateful proxy for K8s API server
+
+
+calico-kube-controller
+runs variety of Calico specific controllers that automate synch of resources
+e.g.
+when K8s node is deleted it tidies up any IP addresses or other
+Calico resources associated with the node
+
+kubectl get nodes -A
+
+
+YaoBank
+Yet AnOther Bank
+
+Install sample app on host1
+
+multipass shell host1
+kubectl apply -f https://raw.githubusercontent.com/tigera/ccol1/main/yaobank.yaml
+
+kubectl get all -n yaobank
+
+
+Customer	GUI		Nodeport
+Summary	BLL
+Database	DAL
+
+
+Deployment status
+kubectl rollout status -n yaobank deployment/customer
+kubectl rollout status -n yaobank deployment/summary
+kubectl rollout status -n yaobank deployment/database
+
+
+curl 198.19.0.1:30180
+
+
+How did I know to use IP address?
+198.19.0.1
+
+It is at the top!
+
+kubectl describe nodes | grep 198.19.0.1
+
+this is from the control node
+
+kubectl describe nodes control | grep 198.19.0.1
+kubectl describe nodes control | more
+kubectl describe nodes control | grep InternalIP
+
+
+Manage the lab
+on multipass shell
+exit
+multipass stop --all
+
+multipass list
+
+Name                    State             IPv4             Image
+control                 Stopped           --               Ubuntu 20.04 LTS
+host1                   Stopped           --               Ubuntu 20.04 LTS
+node1                   Stopped           --               Ubuntu 20.04 LTS
+node2                   Stopped           --               Ubuntu 20.04 LTS
+
+multipass start control
+multipass start node1
+multipass start node2
+multipass start host1
+
+
+Teardown
+multipass delete --all
+multipass purge
+
+ 
