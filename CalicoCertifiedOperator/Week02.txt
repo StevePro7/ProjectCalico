@@ -26,3 +26,118 @@ Traditional firewalls struggle w/ dynamic nature of K8s
 because they are used to static IP address [ranges]
 
 still use firewalls at perimeter to control North / South traffic
+not suitable for East / West traffic within the cluster
+
+
+Network Policy uses label selector => inherently dynamic
+
+Empowers teams to adopt "shift left" security practices
+
+
+Kubernetes	1x network policy
+Calico		2x network policy	namespace + global
+
+priortiy + matching
+can also have
+NetworkSet
+HostEndpoints
+
+
+Kubernetes Network Policy
+Ingress + egress rules
+Pod selectors
+Namespace selectors
+Port lists
+Named ports
+IP blocks + excepts
+TCP, UDP, SCTP
+
+
+Calico Network Policy
+Namespaced + global scopes
+Deny and log actions
+Policy ordering
+Richer matches including	Service Accounts + ICMP
+Istio integration including	Cryptographic identity matching + Layer 5-7 match
+
+
+Network Policy
+can be thought of providing a firewall in front of every pod built into network
+
+Host Endpoints
+Calico like putting a firewall on every one of nodes networking interfaces
+
+can be labelled just like pods
+
+
+Best Practices
+restrict ingress
+
+attackers use compromised workload to find more vulnerable workloads to attack
+restrict egress
+
+i.e.
+restrict both
+ensure every pod is restricted by network policy even if not directly accessible from outside the cluster
+
+
+standardize the way you label and use your network policies
+use consistent schema or design pattern
+
+use app labels OR
+use permission style labels + policy rules	allow any microservice that has the permission label
+
+good practice is to implement default deny network policy but
+exclude the kubenetes + calico control plane pods
+plus allow all pods to connect to kube-dns
+
+
+Calico enterprise
+hierarchical network policy
+e.g.
+InfoSec		tier
+Platform	tier
+App		tier
+
+
+multipass shell host1
+kubectl get pods -n yaobank
+
+
+Compromise
+CUSTOMER_POD=$(kubectl get pods -n yaobank -l app=customer -o name)
+
+kubectl exec -it $CUSTOMER_POD -n yaobank -c customer -- /bin/bash
+
+curl http://database:2379/v2/keys?recursive=true | python -m json.tool
+
+exit
+
+
+
+Network Policy
+cat <<EOF | kubectl apply -f -
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: database-policy
+  namespace: yaobank
+spec:
+  podSelector:
+    matchLabels:
+      app: database
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: summary
+    ports:
+      - protocol: TCP
+        port: 2379
+  egress:
+    - to: []
+EOF
+
+
+Default Deny
