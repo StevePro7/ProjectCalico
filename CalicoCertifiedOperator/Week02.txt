@@ -3,3 +3,26 @@ Weekk02
  
  
 https://courses.academy.tigera.io/courses/course-v1:tigera+CCO-L1+CCO-L1-2020/courseware/6b2f1c92019f42af9abd3fa3d51e037d/54b8b2edc2554f39b1ea690355e37a64/?child=first
+
+
+Network Policy
+primary tool for security Kubernetes network
+
+
+network topologies of routers, switches and firewalls were used to secure networks
+
+
+Now clusters in Kubernetes secured using Network Policy instead Network topology
+
+Network Policy use label selectors as the primary mechanism for identifying workloads
+rather than IP addresses or IP address ranges
+
+
+Kubernetes has based Network policy which does nothing but store it
+it is the network plugins that enforce the policy
+
+
+Traditional firewalls struggle w/ dynamic nature of K8s
+because they are used to static IP address [ranges]
+
+still use firewalls at perimeter to control North / South traffic
