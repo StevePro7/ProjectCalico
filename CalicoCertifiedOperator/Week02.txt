@@ -304,6 +304,14 @@ exit
 
 
 Lockdown cluster egress
+
+Kubernetes network policies only have Allow rules
+Calico network policies have Allow and Deny rules
+
+Kubernetes network policy does not have the concept of setting policy precedence
+
+multipass shell host1
+
 cat <<EOF | calicoctl apply -f -
 apiVersion: projectcalico.org/v3
 kind: GlobalNetworkPolicy
@@ -386,3 +394,144 @@ spec:
       nets:
       - 127.0.0.1/32
 EOF
+
+
+create host endpoints
+allow Calico to start policy enforcement on node interfaces
+
+
+calicoctl get heps
+
+calicoctl patch kubecontrollersconfiguration default --patch='{"spec": {"controllers": {"node": {"hostEndpoint": {"autoCreate": "Enabled"}}}}}'
+
+calicoctl get heps
+nc -w 3 198.19.0.1 21
+
+
+Configure Calico to automatically create Host Endpoints for Kubernetes nodes
+
+
+
+Calico has failsafe ports which take precedencew over any policy
+failsafe ports ensure the connections required for the host network 
+Kubernetes and Calico control plane processes to function are always
+allowed
+
+
+IMPORTANT
+always you have the correct failsafe ports configured before you start applying
+network policies to host endpoints
+
+
+Restrict Access to Kubernetes NodePorts
+Kube-proxy load balances incoming connections to node ports to the pods
+backing the corressponding service
+
+uses DNAT
+Destination Network Address Translation
+map connection to the node port to pod IP address and port
+
+Calico GlobalNetworkPolicy
+allows you to write policy that is enforced BEFORE this translation takes place
+
+
+cat <<EOF | calicoctl apply -f -
+---
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: nodeport-policy
+spec:
+  order: 100
+  selector: has(kubernetes.io/hostname)
+  applyOnForward: true
+  preDNAT: true
+  ingress:
+  - action: Deny
+    protocol: TCP
+    destination:
+      ports: ["30000:32767"]
+  - action: Deny
+    protocol: UDP
+    destination:
+      ports: ["30000:32767"]
+EOF
+
+
+
+curl --connect-timeout 3 198.19.0.1:30180
+
+
+cat <<EOF | calicoctl apply -f -
+---
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: nodeport-policy
+spec:
+  order: 100
+  selector: has(kubernetes.io/hostname)
+  applyOnForward: true
+  preDNAT: true
+  ingress:
+  - action: Allow
+    protocol: TCP
+    destination:
+      ports: [30180]
+    source:
+      nets:
+      - 198.19.15.254/32
+  - action: Deny
+    protocol: TCP
+    destination:
+      ports: ["30000:32767"]
+  - action: Deny
+    protocol: UDP
+    destination:
+      ports: ["30000:32767"]
+EOF
+
+
+Selectively allow access to customer front end
+cat <<EOF | calicoctl apply -f -
+---
+apiVersion: projectcalico.org/v3
+kind: GlobalNetworkPolicy
+metadata:
+  name: nodeport-policy
+spec:
+  order: 100
+  selector: has(kubernetes.io/hostname)
+  applyOnForward: true
+  preDNAT: true
+  ingress:
+  - action: Allow
+    protocol: TCP
+    destination:
+      ports: [30180]
+    source:
+      nets:
+      - 198.19.15.254/32
+  - action: Deny
+    protocol: TCP
+    destination:
+      ports: ["30000:32767"]
+  - action: Deny
+    protocol: UDP
+    destination:
+      ports: ["30000:32767"]
+EOF
+
+
+curl 198.19.0.1:30180
+
+
+
+SUMMARY
+
+Calico enable advanced networking security across Kubernetes cluster
+including hostports and host-networked pods and even services for node ports
+
+
+TEST
+it is NOT best practice to define separate policies for ingress vs. egress
