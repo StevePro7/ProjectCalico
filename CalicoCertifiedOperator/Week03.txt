@@ -122,3 +122,291 @@ pod network namespace that connects the customer pod to the host network namespa
 LAST SPOT
 https://courses.academy.tigera.io/courses/course-v1:tigera+CCO-L1+CCO-L1-2020/courseware/0dc0af9909434d779947452ded9f3adc/cfc3b1b92ad447e795f5aadcb52a4ec6/?child=first
 
+
+SUMMARY
+connect to host1
+multipass shell host1
+
+CUSTOMER_POD=$(kubectl get pods -n yaobank -l app=customer -o name)
+get customer pod
+
+shell into customer pod
+kubectl exec -ti -n yaobank $CUSTOMER_POD -- /bin/bash
+
+ubuntu@host1:~$ kubectl exec -ti -n yaobank $CUSTOMER_POD -- /bin/bash
+root@customer-574bd6cc75-77tw4:/app# ip addr
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+3: eth0@if6: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1410 qdisc noqueue state UP group default 
+    link/ether 2a:71:d7:3e:78:55 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 198.19.22.129/32 brd 198.19.22.129 scope global eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::2871:d7ff:fe3e:7855/64 scope link 
+       valid_lft forever preferred_lft forever
+
+
+198.19.22.129
+
+eth0@if6
+
+
+root@customer-574bd6cc75-77tw4:/app# ip -c link show up
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+3: eth0@if6: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1410 qdisc noqueue state UP mode DEFAULT group default 
+    link/ether 2a:71:d7:3e:78:55 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+root@customer-574bd6cc75-77tw4:/app# 
+
+
+How Hosts See Connections to Pods
+customer pod has an IP address that is hosted in node1
+ubuntu@host1:~$ kubectl get pods -n yaobank -l app=customer -o wide
+198.19.22.129	node1
+
+ubuntu@host1:~$ ssh node1
+
+
+ubuntu@node1:~$ ip -c link show up
+6: cali1e6904b30ae@if3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1410 qdisc noqueue state UP mode DEFAULT group default 
+    link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff link-netns cni-3a16b3b9-97cd-e32a-ae0b-2fb4c63f92c9
+
+
+cali1e6904b30ae@if3
+cali1e6904b30ae
+
+
+host1
+customer pod
+node1
+
+
+How Hosts Route Pod Traffic
+
+host1
+ssh node1
+
+ubuntu@node1:~$ ip route
+default via 10.229.120.1 dev ens4 proto dhcp src 10.229.120.154 metric 100 
+10.229.120.0/24 dev ens4 proto kernel scope link src 10.229.120.154 
+10.229.120.1 dev ens4 proto dhcp scope link src 10.229.120.154 metric 100 
+198.19.0.0/20 dev ens4 proto kernel scope link src 198.19.0.2 
+198.19.21.0/26 via 198.19.0.1 dev ens4 proto bird 
+198.19.21.64/26 via 198.19.0.3 dev ens4 proto bird 
+198.19.22.128 dev cali94aab30c8b6 scope link 
+blackhole 198.19.22.128/26 proto bird 
+198.19.22.129 dev cali1e6904b30ae scope link 
+198.19.22.130 dev cali0621956e322 scope link 
+ubuntu@node1:~$ 
+
+
+
+198.19.22.129 dev cali1e6904b30ae scope link 
+
+route to customer pod IP addr 198.19.22.129 is via cali1e6904b30ae interface
+
+cali1e6904b30ae interface
+is the host end of the veth pair for the customer pod
+
+it is these routes that tell Linux where to send traffic that is destined
+to a local pod on the node
+
+
+Several routes "proto bird"
+198.19.21.0/26 via 198.19.0.1 dev ens4 proto bird 
+198.19.21.64/26 via 198.19.0.3 dev ens4 proto bird
+blackhole 198.19.22.128/26 proto bird 
+
+routes to pods on other nodes that Calico has learned over BGP
+
+
+consider this route
+198.19.21.64/26 via 198.19.0.3 dev ens4 proto bird
+
+indicates pods w/ IP addresses falling w/in 198.19.21.64/26 CIDR
+can be reached 198.19.0.3 [node2] thru ens4 network interface
+
+
+ens4 
+host main interface to the rest of the network
+
+
+Calico uses route aggregation to reduce the number of routes when possible
+/26
+default block size that Calico IP Address Mgt allocates on demand as
+nodes need pod IP addresses
+
+NB:
+blackhole route tells Linux that if it can't find a more specific route
+for an individual IP in that block then it should discard the packet
+[rather than sending it out the default route to the network]
+
+
+Introduction to Encryption
+
+Wireguard
+think of Wireguard as another overlay network w/ the added benefit of
+encryption
+
+Calico uses virtual interface for all wireguard traffic
+
+multipass shell host1
+
+
+Enabling Encryption
+Calico handles all the configuration of WireGuard for you to provide
+full mesh encryption across all node in the cluster
+
+ubuntu@host1:~$ calicoctl patch felixconfiguration default --type='merge' -p '{"spec": {"wireguardEnabled":true}}'
+Successfully patched 1 'FelixConfiguration' resource
+
+
+
+Every node using WireGuard encryption generates its own public key
+calicoctl get node node1 -o yaml
+
+wireguardPublicKey: Gx7A7Sf27JT3H5S11wciL6PTpGwSloipBGhjzKGTsw0=
+
+
+Intel x86
+AMD64
+Advanced Micro Devices 64-Bit
+
+
+
+ubuntu@host1:~$ ssh node1
+
+ubuntu@node1:~$ ip addr | grep wireguard
+10: wireguard.cali: <POINTOPOINT,NOARP,UP,LOWER_UP> mtu 1400 qdisc noqueue state UNKNOWN group default qlen 1000
+    inet 198.19.22.131/32 brd 198.19.22.131 scope global wireguard.cali
+
+
+Wireguard interface [10] needs an IP address [198.19.22.131/32]
+Calico automatically allocates this from teh default IP pool
+
+
+Disabling Encryption
+calicoctl patch felixconfiguration default --type='merge' -p '{"spec":{"wireguardEnabled":false}}'
+
+calicoctl get node node1 -o yaml
+
+
+Introduction to IP Pools + BGP Peering
+
+IP Pools
+Calico resources which define range of addresses that the Calico IP address mgt
+IPAM [CNI plugin] can use
+
+range of IP addresses specified using CIDR notation
+
+e.g.
+YAML
+apiVersion: projectcalico.org/v3
+kind: IPPool
+
+
+Introduction to BGP Peering
+
+BGP
+standards based network protocol
+supported by most network routers
+used to sync + share routing info btwn routers
+
+
+Lab
+Cluster IP Address Ranges
+
+K8s config
+2x address ranges
+
+01.
+cluster pod CIDR
+range of IP addresses Kubernetes is expecting to be assiged to pods
+in the cluster
+
+02.
+services CIDR
+range of IP addresses that are used for the Cluster IPs of Kubernetes Services
+[virtual IP that corresponds to each Kubernetes Service
+
+
+both are configured at cluster creation time
+[initial kubeadm configuration]
+
+kubectl cluster-info dump | grep -m 2 -E "service-cidr|cluster-cidr"
+
+ubuntu@host1:~$ kubectl cluster-info dump | grep -m 2 -E "service-cidr|cluster-cidr"
+                    "k3s.io/node-args": "[\"server\",\"--flannel-backend\",\"none\",\"--cluster-cidr\",\"198.19.16.0/20\",\"--service-cidr\",\"198.19.32.0/20\",\"--write-kubeconfig-mode\",\"664\",\"--disable-network-policy\"]",
+
+
+Calico configuration
+understand IP Pools that Calico has been configured with
+offer finer grained control of IP address ranges to be used by pods in cluster
+
+
+ubuntu@host1:~$ calicoctl get ippools
+NAME                  CIDR             SELECTOR   
+default-ipv4-ippool   198.19.16.0/21   all() 
+
+
+Overall we have the following address ranges:
+
+198.19.16.0/20 - Cluster Pod CIDR
+198.19.16.0/21- Default IP Pool CIDR
+198.19.32.0/20 - Service CIDR
+
+
+IMPORTANT
+these IP address ranges are CIDRs not subnets
+
+strict networking sense:
+subnet implies L2 connectivity within the subnet
+
+but Kubernetes networking model is orientated around L3 connectivity
+
+
+Create IP Pools with Different Scopes
+use Calico IP Pools
+distinguish btwn different ranges of addresses w/ different routability scopes
+e.g.
+range of IPs that is only routable within the cluster and
+another range of IPs that is routable across the whole enterprise
+
+
+choose which pods should get IPs from which range depending on wether
+workloads from outside cluster need to directly access the pods or not
+
+
+Create externally routable IP Pool
+
+cat <<EOF | calicoctl apply -f - 
+---
+apiVersion: projectcalico.org/v3
+kind: IPPool
+metadata:
+  name: external-pool
+spec:
+  cidr: 198.19.24.0/21
+  blockSize: 29
+  ipipMode: Never
+  natOutgoing: true
+  nodeSelector: "!all()"
+EOF
+
+
+
+ubuntu@host1:~$ calicoctl get ippools
+NAME                  CIDR             SELECTOR   
+default-ipv4-ippool   198.19.16.0/21   all()      
+external-pool         198.19.24.0/21   !all()     
+
+
+We now have:
+
+198.19.16.0/20 - Cluster Pod CIDR
+198.19.16.0/21 - Default IP Pool CIDR
+198.19.24.0/21 - External Pool CIDR
+198.19.32.0/20 - Service CID
