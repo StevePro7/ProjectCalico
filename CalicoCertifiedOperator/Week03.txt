@@ -1,0 +1,124 @@
+Weekk03
+02/07/2021
+ 
+https://courses.academy.tigera.io/courses/course-v1:tigera+CCO-L1+CCO-L1-2020/courseware/0dc0af9909434d779947452ded9f3adc/411ee57c5d5c4775a54404b7d0af6655/?child=first
+
+
+Calico network
+Encrypt data w/ Wireguard
+
+
+eech node has its own IP address
+connected over a network interface
+eth0
+
+
+Pod has own IP address
+isolation via Linux network namespaces
+
+
+Overlay network
+used when unerlying network does not know how to forward the Pod traffic
+
+
+Calico supports both
+VXLAN
+IPIP
+overlays
+
+implemented as virtual interfaces in the Linux kernel
+
+
+Calico also supports Cross Sub Overlay
+
+
+How Pods See the Network
+each pods gets its own Linux network namespace
+like an isolated copy of the Linux networking stack
+
+kubectl get pods -n yaobank -l app=customer -o wide
+198.19.22.129
+
+CUSTOMER_POD=$(kubectl get pods -n yaobank -l app=customer -o name)
+kubectl exec -ti -n yaobank $CUSTOMER_POD -- /bin/bash
+
+
+exec into pod
+see local view of network
+IP address
+network interfaces
+routing table
+
+
+ip addr
+eth0 interface
+pods actual IP address
+matches the output above
+e.g.
+198.19.22.129
+
+
+ip link
+ip -c link show up
+
+veth pair
+
+3: eth0@if6: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1410 qdisc noqueue state UP mode DEFAULT group default 
+
+
+eth0
+link to the host network namespace
+link-netnsid 0
+pods side of the virtual ethernet [veth] pair that connects pod to node host
+network namespace
+
+eth0@if6
+6
+interface number for the other end of the veth pair
+located within the host network namespace itself
+
+
+ip route
+default via 169.254.1.1 dev eth0 
+169.254.1.1 dev eth0  scope link 
+
+pods default route is over eth0 interface
+i.e.
+pods always sends traffic over eth0
+
+NOTE
+next hop 169.254.1.1 is dummy address used by Calico
+every Calico networked pod sees this as next hop
+
+
+
+How Hosts See Connections to Pods
+kubectl get pods -n yaobank -l app=customer -o wide
+198.19.22.129	node1
+
+pod is running on node1
+ssh node1
+yes
+ip -c link show up
+
+
+6
+6: cali1e6904b30ae@if3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1410 qdisc noqueue state UP mode DEFAULT group default 
+    link/ether ee:ee:ee:ee:ee:ee brd ff:ff:ff:ff:ff:ff link-netns cni-3a16b3b9-97cd-e32a-ae0b-2fb4c63f92c9
+    
+    
+3
+links to if3
+
+network namespace id 3
+customer pod network namespace
+
+
+veth pair
+pod network namespace that connects the customer pod to the host network namespace
+
+
+
+LAST SPOT
+https://courses.academy.tigera.io/courses/course-v1:tigera+CCO-L1+CCO-L1-2020/courseware/0dc0af9909434d779947452ded9f3adc/cfc3b1b92ad447e795f5aadcb52a4ec6/?child=first
+
