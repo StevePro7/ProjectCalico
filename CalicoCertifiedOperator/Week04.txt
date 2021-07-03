@@ -1,0 +1,242 @@
+Weekk04
+03/07/2021
+ 
+https://courses.academy.tigera.io/courses/course-v1:tigera+CCO-L1+CCO-L1-2020/courseware/9472c002e19f4aeebed95cbb4414c88d/8a819660f9a34ba29b4173e9d2a9a871/?child=first
+
+
+Kubernetest Services
+way to abstract access to group of pods as network service
+
+
+when client connects to service the connection is load balanced to one of the
+pods backing the service
+
+
+ClusterIP
+when pod tries to connect to ClusterIP the connection is intercepted by rules
+kube-proxy has been programmed into the kernel which select a random backing
+pod to load balance to
+
+changing the dest IP to be IP of backing pod using DNAT, the Linux kernel
+tracks the state of these connections and auto reverses DNAT for return packets
+
+
+NodePort
+similar process however source IP address is changed as well as dest IP addr
+from client pod IP to the node IP
+
+if kube-proxy didn't do this then return packets leaving the backing pod node
+would go directly to the client w/o giving node that did the NAT a chance to
+reverse the NAT
+i.e.
+client would drop traffic because it wouldn't recognize it as being part of
+the connection it made to the NodePort
+
+Exception
+service configured w/ ExternalTrafficPolicy local
+kube-proxy only load balances to backing pods on the same node
+i.e.
+DNAT preserving client source IP address
+
+
+LoadBalancer
+repeat the same concepts
+LB
+typically located at point in the network where return traffic is guaranteed to routed via it
+so
+only has to do DNAT for its load balancing 
+
+it load balances the traffic across the node using the corresponding NodePort
+of the service
+
+kube-proxy then follows the same processes as it did for the standard port
+NAT both source + dest IP addresses
+
+the return then follow the same path back to the client
+
+
+some load balances still support ExternalTrafficPolicy local
+in this case they will only load balance to nodes hosting a backing pod
+
+and kube-proxy will only load balance to backing pods on the same node
+preserving the org source IP addr all the way to the backing pod
+
+
+Introduction to Kube-Proxy
+explore load balancing rules kube-proxy programs into the kernel
+
+by default
+kube-proxy uses Linux iptables for these rules
+
+or
+can be configured to use Linux IPVS dataplanes	perf benefits
+
+or
+Calico eBPF native service handling
+which doesn't use kube-proxy at all	out performs kube-proxy
+
+
+kube-proxy iptables
+
+
+Examine Kubernetes Services
+kubectl get svc -n yaobank
+
+kubectl get endpoints -n yaobank
+NAME       ENDPOINTS                          AGE
+database   198.19.21.66:2379                  3d15h
+summary    198.19.21.67:80,198.19.22.130:80   3d15h
+customer   198.19.22.129:80                   3d15h
+
+
+kubectl get pods -n yaobank -o wide
+
+
+Kube-Proxy Cluster IP Implementation
+kube-proxy using IP tables			NOT IPVS mode
+
+kube-proxy uses DNAT to map ClusterIP to the chosen backing pod
+
+
+Pod A	Summary		node1
+Pod B	Database	node2
+
+commuincates using kube-proxy iptables
+
+
+kubectl get endpoints -n yaobank summary
+ubuntu@host1:~$ kubectl get endpoints -n yaobank summary
+NAME      ENDPOINTS                          AGE
+summary   198.19.21.67:80,198.19.22.130:80   3d17h
+
+
+
+The summary service has two endpoints (198.19.21.1 on port 80, and 198.19.22.131 on port 80, in this example output)
+
+
+ssh node1
+
+Examine the KUBE-SERVICE chain
+
+iptables chains
+used to manage large numbers of iptables rules into groups
+
+kube-proxy puts its top level rules into KUBE-SERVICES chain
+e.g.
+
+sudo iptables -v --numeric --table nat --list KUBE-SERVICES
+
+
+Each iptables chain consists of list of rules executed in order until rule match
+
+target		chain iptable will jump if rule match
+prot		protocol match
+srce + dest	source + dest IP address match
+comments	kube-proxy includes
+additional
+
+
+ubuntu@node1:~$ sudo iptables -v --numeric --table nat --list KUBE-SERVICES | grep -E summary
+    0     0 KUBE-MARK-MASQ  tcp  --  *      *      !198.19.16.0/20       198.19.40.210        /* yaobank/summary:http cluster IP */ tcp dpt:80
+    0     0 KUBE-SVC-OIQIZJVJK6E34BR4  tcp  --  *      *       0.0.0.0/0            198.19.40.210        /* yaobank/summary:http cluster IP */ tcp dpt:80
+
+
+KUBE-SEP-XXXXXXXXXXXXXXXX -> summary pod
+sudo iptables -v --numeric --table nat --list KUBE-SVC-OIQIZJVJK6E34BR4
+
+
+Recap
+trace kube-proxy iptables rules used to load balance traffic to summary pods
+exposed as a service of type ClusterIP
+
+
+SEP
+Service EndPoint
+
+
+packet being sent to clusterIP
+
+KUBE-SERVICES chain matches clusterIP and jumps to KUBE-SVC chain
+KUBE-SVC chain load balances packet to random service endpoint KUBE-SEP chain
+KUBE-SEP chain DNAT packet so it gets routed to service endpoint backing pod
+
+
+
+Kube-Proxy NodePort Implementation
+
+iptables rules kube-proxy programs into the kernel to implement Node Port
+based services
+e.g.
+Customer service
+
+External clients use Customer service to connect to Customer pods
+
+kube-proxy uses NAT to map Node Port to chosen backing pod and source IP to the
+node IP of the ingress node so it can reverse the NAT for return packets
+
+
+kubectl get endpoints -n yaobank customer
+
+ubuntu@host1:~$ kubectl get endpoints -n yaobank customer
+NAME       ENDPOINTS          AGE
+customer   198.19.22.129:80   3d17h
+
+
+198.19.22.129
+starting from KUBE-SERVICES iptables chain, traverse each chain to get the rule
+directing traffic to this endpoint IP address
+
+KUBE-SERVICES -> KUBE-NODEPORTS
+
+sudo iptables -v --numeric --table nat --list KUBE-SERVICES | grep KUBE-NODEPORTS
+ubuntu@node1:~$ sudo iptables -v --numeric --table nat --list KUBE-SERVICES | grep KUBE-NODEPORTS
+  153  9180 KUBE-NODEPORTS  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* kubernetes service nodeports; NOTE: this must be the last rule in this chain */ ADDRTYPE match dst-type LOCAL
+
+
+ADDRTYPE match dst-type LOCAL
+matches any packet w/ a local host IP as the destination
+i.e.
+any address that is assigned to one of the host interfaces
+
+
+KUBE-NODEPORTS -> KUBE-SVC-XXXXXXXXXXXXXXXX
+sudo iptables -v --numeric --table nat --list KUBE-NODEPORTS
+
+
+    0     0 KUBE-SVC-PX5FENG4GZJTCELT  tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            /* yaobank/customer:http */ tcp dpt:30180
+
+rule directs traffic destined for customer service to the chain that load
+balances the service
+
+
+KUBE-SVC-XXXXXXXXXXXXXXXX -> KUBE-SEP-XXXXXXXXXXXXXXXX
+
+sudo iptables -v --numeric --table nat --list KUBE-SVC-PX5FENG4GZJTCELT
+
+ubuntu@node1:~$ sudo iptables -v --numeric --table nat --list KUBE-SVC-PX5FENG4GZJTCELT
+Chain KUBE-SVC-PX5FENG4GZJTCELT (2 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 KUBE-SEP-5ACZIZ6RUWUYDTM3  all  --  *      *       0.0.0.0/0            0.0.0.0/0            /* yaobank/customer:http */
+
+only single backing pod for customer service
+no load balancing so there is single rule that directs all traffic to the chain
+that delivers the packet to the service endpoint
+
+sudo iptables -v --numeric --table nat --list KUBE-SEP-5ACZIZ6RUWUYDTM3
+
+ubuntu@node1:~$ sudo iptables -v --numeric --table nat --list KUBE-SEP-5ACZIZ6RUWUYDTM3
+Chain KUBE-SEP-5ACZIZ6RUWUYDTM3 (1 references)
+ pkts bytes target     prot opt in     out     source               destination         
+    0     0 KUBE-MARK-MASQ  all  --  *      *       198.19.22.129        0.0.0.0/0            /* yaobank/customer:http */
+    0     0 DNAT       tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            /* yaobank/customer:http */ tcp to:198.19.22.129:80
+
+
+Recap
+trace kube-proxy iptables rules to load balance traffic to customer pods
+exposed as service type NodePort
+
+KUBE-SERVICES chain jumps to the KUBE-NODEPORTS chain
+
+KUBE-NODEPORTS chain matches NodePort and jumps to KUBE-SVC chain
+KUBE-SVC chain load balances packet to random service endpoint KUBE-SEP
+KUBE-SEP chain DNAT packet so it will get routed to service ep backing pod

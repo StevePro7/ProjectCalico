@@ -14,3 +14,12 @@ Control (198.19.0.1) 	- Kubernetes control-plane node
 Node1 	(198.19.0.2) 	- Kubernetes worker node
 Node2 	(198.19.0.3) 	- Kubernetes worker node
 Host1 	(198.19.15.254) - General purpose host
+
+
+
+ubuntu@host1:~$ kubectl get pods -n yaobank -o wide
+NAME                        READY   STATUS    RESTARTS   AGE     IP              NODE 
+database-6c5db58d95-lrxfb   1/1     Running   0          3d15h   198.19.21.66    node2
+summary-85c56b76d7-chwt9    1/1     Running   0          3d15h   198.19.21.67    node2
+summary-85c56b76d7-764v9    1/1     Running   0          3d15h   198.19.22.130   node1
+customer-574bd6cc75-77tw4   1/1     Running   0          3d15h   198.19.22.129   node1
