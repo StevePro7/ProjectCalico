@@ -410,3 +410,134 @@ We now have:
 198.19.16.0/21 - Default IP Pool CIDR
 198.19.24.0/21 - External Pool CIDR
 198.19.32.0/20 - Service CID
+
+
+Examine BGP peering status
+
+BGP
+Border Gateway Protocol
+
+
+ubuntu@host1:~$ ssh node1
+
+
+ubuntu@node1:~$ sudo calicoctl node status
+Calico process is running.
+
+IPv4 BGP status
++--------------+-------------------+-------+----------+-------------+
+| PEER ADDRESS |     PEER TYPE     | STATE |  SINCE   |    INFO     |
++--------------+-------------------+-------+----------+-------------+
+| 198.19.0.1   | node-to-node mesh | up    | 22:05:48 | Established |
+| 198.19.0.3   | node-to-node mesh | up    | 22:06:02 | Established |
++--------------+-------------------+-------+----------+-------------+
+
+IPv6 BGP status
+No IPv6 peers found.
+
+
+node1 is peering with other nodes in the cluster and not any network outside cluster
+e.g.
+198.19.0.1	control
+198.19.0.3	node2
+
+
+NOTE
+Calico adds routes on each node to the local pods on that node
+BGP is not involved in programming the routes to the local pods on the node
+
+Each node only uses BGP to share these local routes w/ rest of network
+
+
+Add a BGP Peer
+simulate peering to network outside the cluster by peering host1
+
+host1
+setup to act as if it were a router
+ready to accept new BGP peering requests
+
+
+cat <<EOF | calicoctl apply -f -
+---
+apiVersion: projectcalico.org/v3
+kind: BGPPeer
+metadata:
+  name: bgppeer-global-host1
+spec:
+  peerIP: 198.19.15.254
+  asNumber: 64512
+EOF
+
+ubuntu@host1:~$ ssh node1
+
+ubuntu@node1:~$ sudo calicoctl node status
+Calico process is running.
+
+IPv4 BGP status
++---------------+-------------------+-------+----------+-------------+
+| PEER ADDRESS  |     PEER TYPE     | STATE |  SINCE   |    INFO     |
++---------------+-------------------+-------+----------+-------------+
+| 198.19.0.1    | node-to-node mesh | up    | 22:05:49 | Established |
+| 198.19.0.3    | node-to-node mesh | up    | 22:06:03 | Established |
+| 198.19.15.254 | global            | up    | 10:58:02 | Established |
++---------------+-------------------+-------+----------+-------------+
+
+IPv6 BGP status
+No IPv6 peers found.
+
+
+Output shows that Calico is now peered w/ host1
+198.19.15.254
+
+Host1 	(198.19.15.254) - General purpose host
+
+
+Calico can share routes to and learn routes from host1
+[host1 represents a router in lab]
+
+
+Configure a Namespace to use External Routable IP Addresses
+Calico supports annotations on both namespaces and pods used to control
+IP Pool or IP address it wil receive when pod is created
+
+
+Create the namespace
+
+ubuntu@host1:~$ cat <<EOF | kubectl apply -f -
+> ---
+> apiVersion: v1
+> kind: Namespace
+> metadata:
+>   annotations:
+>     cni.projectcalico.org/ipv4pools: '["external-pool"]'
+>   name: external-ns
+> EOF
+namespace/external-ns created
+
+
+
+Deploy an NGINX pod
+ubuntu@host1:~$ kubectl apply -f https://raw.githubusercontent.com/tigera/ccol1/main/nginx.yaml
+deployment.apps/nginx created
+networkpolicy.networking.k8s.io/nginx created
+
+
+kubectl get pods -n external-ns -o wide
+
+curl 198.19.28.208
+
+HTML output
+this confirms that the NGINX pod is directly routable on the broader network
+
+
+Check Calico IPAM allocations statistics
+
+calicoctl ipam show
+
+can be good idea to check IP allocations to check sized IP pools OK
+e.g.
+if not confident about the number of pods and whether original size of pools
+
+
+Choosing the Best Networking Options
+https://docs.projectcalico.org/archive/v3.16/networking/determine-best-networking
