@@ -23,3 +23,8 @@ database-6c5db58d95-lrxfb   1/1     Running   0          3d15h   198.19.21.66   
 summary-85c56b76d7-chwt9    1/1     Running   0          3d15h   198.19.21.67    node2
 summary-85c56b76d7-764v9    1/1     Running   0          3d15h   198.19.22.130   node1
 customer-574bd6cc75-77tw4   1/1     Running   0          3d15h   198.19.22.129   node1
+
+
+
+EXAM
+https://courses.academy.tigera.io/courses/course-v1:tigera+CCO-L1+CCO-L1-2020/courseware/1a79f903c99948cfaef16374b04b5bcf/bd30021a7e624110823013ab67398704/?child=first
