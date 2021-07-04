@@ -257,3 +257,237 @@ reduce the number of network hops for return traffic
 
 load balance independent of network topology w/ reduced CPU + latency
 compared to kube-proxy
+
+rec'd incoming connection from external client Calico native service handling
+is able to load balance the connection, fwd'ing the packets to another node if
+req'd w/o NAT
+
+rec'ing node performs DNAT to send traffic to backing pod
+reverse packets get DNAT reversed and if DSR enabled then send directly back to client
+
+
+About Calico eBPF
+alternative to Linux data plane	based on iptables
+
+scales higher throuhgput
+has native support for Kubernetes services w/o needing kube-proxy
+supports DSR
+
+https://docs.projectcalico.org/maintenance/ebpf/enabling-bpf
+
+
+NodePort without source IP preservation
+
+kube-proxy
+client source IP NOT preserved all the way to pod backing service
+
+kube-proxy
+uses NAT to map dest IP to chosen backing pod DNAT and map source IP to node IP
+of the ingress node SNAT so standard Linux networking routes the return packets
+to the ingress node so it can reverse the NAT
+
+
+2x terminals
+multipass shell host1
+
+kubectl logs -n yaobank -l app=customer --follow
+
+curl 198.19.0.1:30180
+
+
+NOTE
+if cluster configured to use overlay [VXLAN or IPIP] or WireGuard then SNAT
+would make traffic appear to compe from teh IP address associated w/ corresponding
+virutal interface on hte ingress node
+
+
+Enable Calico eBPF
+
+1. connect directly to API server [don't use kube-proxy]
+2. disable kube-proxy
+3. configure Calico to switch to eBPF dataplane
+
+
+Configure Calico to connect directly to the API server
+Calico supports a ConfigMap to configure direct connections for all components
+
+note
+talk to load balancer or domain name where necessary so it stil works
+
+but for us single node hosting Kubernetes API service
+
+cat <<EOF | kubectl apply -f -
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: kubernetes-services-endpoint
+  namespace: tigera-operator
+data:
+  KUBERNETES_SERVICE_HOST: "198.19.0.1"
+  KUBERNETES_SERVICE_PORT: "6443"
+EOF
+
+
+Wait 1min and restart
+
+kubectl delete pod -n tigera-operator -l k8s-app=tigera-operator
+
+watch kubectl get pods -n calico-system
+
+
+Disable kube-proxy
+
+kube-proxy normally runs as a daemonset
+remove kube-proxy from every node by add nodeSelector to that daemonset
+which excludes all nodes
+
+calicoctl patch felixconfiguration default --patch='{"spec": {"bpfKubeProxyIptablesCleanupEnabled": false}}'
+
+
+Switch on eBPF mode
+
+calicoctl patch felixconfiguration default --patch='{"spec": {"bpfEnabled": true}}'
+
+kubectl delete pod -n yaobank -l app=customer
+kubectl delete pod -n yaobank -l app=summary
+
+
+Source IP preservation
+
+after switch to handle packets w/ eBPF rather than standard Linux networking pipeline
+
+allows to preserve source IP address including return traffic from original ingress
+node
+
+kubectl logs -n yaobank -l app=customer --follow
+
+curl 198.19.0.1:30180
+
+
+
+Direct Server Return (DSR)
+
+allows node hosting service backing pod to send and return traffic directly
+to the external client rather than take extra hop via ingress node
+[control node in our example]
+
+
+Snoop traffic without DSR
+ssh control
+sudo tcpdump -nvi any 'tcp port 30180'
+
+
+other terminal
+curl 198.19.0.1:30180
+
+Traffic flowing via node port in both directions
+e.g.
+host1 			to node port	control node
+198.19.0.1.30180 	> 198.19.0.1.30180 
+
+node port		to host1
+198.19.0.1.30180 	> 198.19.0.1.30180 
+
+
+Switch on DSR
+calicoctl patch felixconfiguration default --patch='{"spec": {"bpfExternalServiceMode": "DSR"}}'
+
+now see traffic in only one direction 
+e.g.
+host1 			to node port	control node
+198.19.0.1.30180 	> 198.19.0.1.30180 
+
+return traffic going directly back to the client [host1] from the node hosting
+customer pod backing the service	[node1]
+
+
+Introduction to Advertising Services
+
+alternative to node port or load balance is to advertize service IP addresses
+over BGP
+e.g.
+on prem or private cloud deployments
+
+use routers to do work => irrespective of topology + network is service aware
+
+
+Advertise Cluster IP Range
+
+ubuntu@host1:~$ ip route
+default via 10.229.120.1 dev ens4 proto dhcp src 10.229.120.118 metric 100 
+10.229.120.0/24 dev ens4 proto kernel scope link src 10.229.120.118 
+10.229.120.1 dev ens4 proto dhcp scope link src 10.229.120.118 metric 100 
+198.19.0.0/20 dev ens4 proto kernel scope link src 198.19.15.254 
+198.19.28.208/29 via 198.19.0.2 dev ens4 proto bird 
+
+
+proto bird
+Calico learned to access nginx pod create externally
+
+
+Advertize Kubernetes services rather than individual pods over BGP
+
+cat <<EOF | calicoctl apply -f -
+---
+apiVersion: projectcalico.org/v3
+kind: BGPConfiguration
+metadata:
+  name: default
+spec:
+  serviceClusterIPs:
+  - cidr: "198.19.32.0/20"
+EOF
+
+
+calicoctl get bgpconfig default -o yaml
+
+ubuntu@host1:~$ calicoctl get bgpconfig default -o yaml
+apiVersion: projectcalico.org/v3
+kind: BGPConfiguration
+metadata:
+  creationTimestamp: "2021-07-04T11:29:30Z"
+  name: default
+  resourceVersion: "63940"
+  uid: bfd76acc-4fb8-4ae9-8ff6-db09b3bef9f8
+spec:
+  serviceClusterIPs:
+  - cidr: 198.19.32.0/20
+
+
+
+NOW
+ubuntu@host1:~$ ip route
+default via 10.229.120.1 dev ens4 proto dhcp src 10.229.120.118 metric 100 
+10.229.120.0/24 dev ens4 proto kernel scope link src 10.229.120.118 
+10.229.120.1 dev ens4 proto dhcp scope link src 10.229.120.118 metric 100 
+198.19.0.0/20 dev ens4 proto kernel scope link src 198.19.15.254 
+198.19.28.208/29 via 198.19.0.2 dev ens4 proto bird 
+198.19.32.0/20 proto bird 
+	nexthop via 198.19.0.1 dev ens4 weight 1 
+	nexthop via 198.19.0.2 dev ens4 weight 1 
+	nexthop via 198.19.0.3 dev ens4 weight 1 
+
+
+traffic to any service cluster IP address will get load balanced across all nodes
+in the cluster by the network using ECMP
+
+Equal Cost Multi Path
+
+kube-proxy or Calico native service handling then load balances the cluster IP
+across the service endpoints [backing pods] in exactly the same way as if a pod
+had accessed a service via a cluster IP
+
+
+kubectl get svc -n yaobank customer
+
+curl 198.19.35.118
+
+
+Advertizing cluster IP provides an alternative way to access services via Node Port
+[simplfiy client service discovery w/o clients need to understand DNS SRV records]
+OR
+external network load balancers		less cost
+
+
+Advertise External IPs
