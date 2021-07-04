@@ -1,0 +1,40 @@
+PLANES
+04/07/2021
+
+https://www.cloudflare.com/learning/network-layer/what-is-the-control-plane
+
+
+Plane
+abstract concept where certain processes take place
+
+
+Control Plane
+part of the network that controls how data packets are forwarded
+meaning how data is sent from one place to another
+
+process of creating routing table is part of control plane
+routers use various protocols to identify network paths and store paths in routing tables
+
+
+Data Plane
+forwards the data packets
+also called forwarding plane
+
+
+ANALOGY
+Control plane	stoplights that operate intersections of traffic of the city
+Data    plane	cars that drive on the road, stop at intersections, obey lights
+
+
+Protocols
+
+BGP		
+Border Gateway Protocol
+
+
+
+Network topology
+refers to the way data flows in a network
+control plane establishes and changes network topology
+e.g.
+the way the roads are arranged = computing devices are destinations roads lead to

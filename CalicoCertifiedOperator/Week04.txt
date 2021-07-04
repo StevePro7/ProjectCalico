@@ -240,3 +240,20 @@ KUBE-SERVICES chain jumps to the KUBE-NODEPORTS chain
 KUBE-NODEPORTS chain matches NodePort and jumps to KUBE-SVC chain
 KUBE-SVC chain load balances packet to random service endpoint KUBE-SEP
 KUBE-SEP chain DNAT packet so it will get routed to service ep backing pod
+
+
+Calico Native Service Handling
+https://courses.academy.tigera.io/courses/course-v1:tigera+CCO-L1+CCO-L1-2020/courseware/9472c002e19f4aeebed95cbb4414c88d/a8c8b42bfc554219a0a2dae2ae78674c/?child=first
+
+
+eBPF
+alternative to using kube-proxy
+
+source IP preservation	=> easier network policy
+
+DSR
+Direct Server Return	=> improved performance
+reduce the number of network hops for return traffic
+
+load balance independent of network topology w/ reduced CPU + latency
+compared to kube-proxy
