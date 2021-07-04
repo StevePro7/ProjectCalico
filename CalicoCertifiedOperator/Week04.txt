@@ -491,3 +491,62 @@ external network load balancers		less cost
 
 
 Advertise External IPs
+
+configure service to have one or more external IPs
+
+kubectl get svc -n yaobank
+
+ubuntu@host1:~$ kubectl get svc -n yaobank
+NAME       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+database   ClusterIP   198.19.40.101   <none>        2379/TCP       4d15h
+summary    ClusterIP   198.19.40.210   <none>        80/TCP         4d15h
+customer   NodePort    198.19.36.165   <none>        80:30180/TCP   4d15h
+
+
+NOTE
+no external IP
+
+
+Update BGP configuration
+advertise a service external IP CIDR range of 198.19.48.0/20
+
+calicoctl patch BGPConfig default --patch \
+   '{"spec": {"serviceExternalIPs": [{"cidr": "198.19.48.0/20"}]}}'
+
+ubuntu@host1:~$ ip route
+default via 10.229.120.1 dev ens4 proto dhcp src 10.229.120.118 metric 100 
+10.229.120.0/24 dev ens4 proto kernel scope link src 10.229.120.118 
+10.229.120.1 dev ens4 proto dhcp scope link src 10.229.120.118 metric 100 
+198.19.0.0/20 dev ens4 proto kernel scope link src 198.19.15.254 
+198.19.28.208/29 via 198.19.0.2 dev ens4 proto bird 
+198.19.32.0/20 proto bird 
+	nexthop via 198.19.0.1 dev ens4 weight 1 
+	nexthop via 198.19.0.2 dev ens4 weight 1 
+	nexthop via 198.19.0.3 dev ens4 weight 1 
+198.19.48.0/20 proto bird 
+	nexthop via 198.19.0.1 dev ens4 weight 1 
+	nexthop via 198.19.0.2 dev ens4 weight 1 
+	nexthop via 198.19.0.3 dev ens4 weight 1 
+
+Assign the service external IP
+kubectl patch svc -n yaobank customer -p  '{"spec": {"externalIPs": ["198.19.48.10"]}}'
+
+ubuntu@host1:~$ kubectl get svc -n yaobank
+NAME       TYPE        CLUSTER-IP      EXTERNAL-IP    PORT(S)        AGE
+database   ClusterIP   198.19.40.101   <none>         2379/TCP       4d15h
+summary    ClusterIP   198.19.40.210   <none>         80/TCP         4d15h
+customer   NodePort    198.19.36.165   198.19.48.10   80:30180/TCP   4d15h
+
+
+curl 198.19.48.10
+still get 500 error
+
+
+Review
+5x different ways to connect pods from outside the cluster
+
+1. via standard NodePort on specific node
+2. direct to the pod IP address using externally routable IP Pools
+3. advertize the service cluster IP range using ECMP to load balance across nodes
+4. advertize individual cluster IP to load balance to nodes hosting pods backing svc
+5. advertize service external IP to consume outside cluster IP range
