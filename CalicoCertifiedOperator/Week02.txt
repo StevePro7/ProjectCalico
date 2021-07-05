@@ -19,7 +19,7 @@ rather than IP addresses or IP address ranges
 
 
 Kubernetes has based Network policy which does nothing but store it
-it is the network plugins that enforce the policy
+it is the CNI network plugins that enforce the network policy
 
 
 Traditional firewalls struggle w/ dynamic nature of K8s
@@ -68,6 +68,7 @@ Host Endpoints
 Calico like putting a firewall on every one of nodes networking interfaces
 
 can be labelled just like pods
+and network policy applies to them based on labels	just like pods
 
 
 Best Practices

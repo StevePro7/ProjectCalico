@@ -40,3 +40,59 @@ Setup sample Application
 
 Week02
 Network Policy
+
+Network Policies are abstracted from the network by using label selectors
+as their primary mechanism for identifying workloads rather than IP addresses [ranges]
+
+
+Kubernetes objects
+NetworkPolicy
+
+Calico Network Policy
+NetworkPolicy
+GlobalNetworkPolicy
+
+
+Network Policy
+think of NP as providing a Firewall in front of every pod built into pod network
+
+also Calico NP providing a Firewall in front of very nodes network interfaces
+"Host Endpoints"
+
+
+Istio Integration
+enforcing network policy at 
+- service mesh layer
+- pod network layer
+
+provides
+defense in depth for zero trust network security model
+
+
+Calico Enterprise
+
+
+Best Practices
+- restrict ingress and egress traffic
+- standardize label schema and network policy	e.g. app label
+- implement default deny policy to prevent traffic not explicitly allowed by other policy
+- OR implement default app policy to pods + exclude kube-system + calico-system
+- implement Hierarchical Network Policy if have Calico Enterprise
+
+
+Lab
+lockdown database microservice direct access
+implement Calico GlobalNetworkPolicy for default-deny	for entire cluster
+
+Lab
+Lazy Policy
+Lockdown Cluster Egress
+Grant Selective Cluster Egress
+
+Managing Trust Across Teams
+
+
+Manage Hosts and NodePorts		Host endpoints protection outside cluster
+
+Lab
+lockdown host endpoint
