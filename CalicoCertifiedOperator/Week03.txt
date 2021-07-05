@@ -308,6 +308,11 @@ apiVersion: projectcalico.org/v3
 kind: IPPool
 
 
+default
+blocksize: 26
+which means 64 IP addresses
+
+
 Introduction to BGP Peering
 
 BGP

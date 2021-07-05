@@ -96,3 +96,37 @@ Manage Hosts and NodePorts		Host endpoints protection outside cluster
 
 Lab
 lockdown host endpoint
+
+
+
+Week03
+
+Calico networking on Linux nodes
+
+Lab
+How Pods See the Network
+How Hosts See Connections to Pods
+cali...
+veth pai connect customer pod to the host network namespace
+
+How Hosts Route Pod Traffic
+
+
+Wireguard
+line another overlay network option but with encryption
+
+
+Lab
+Enabling Encryption
+
+
+IP Pools + BGP Peering
+Lab
+Cluster IP Address Ranges
+Create IP Pools with Different Scopes
+Configure BGP Peering
+Configure a Namespace to use External Routable IP Addresses
+
+
+
+Week04
