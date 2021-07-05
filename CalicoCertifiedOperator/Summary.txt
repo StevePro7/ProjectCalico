@@ -130,3 +130,35 @@ Configure a Namespace to use External Routable IP Addresses
 
 
 Week04
+
+Kubernetes services
+
+understanding kube-proxy
+
+Lab
+Examine Kubernetes Services
+
+Kube-Proxy Cluster IP Implementation
+KUBE-SERVICES
+KUBE-SVC
+KUBE-SEP
+
+
+Kube-Proxy NodePort Implementation
+KUBE-NODEPORTS
+
+
+Calico native service handling
+eBPF
+
+NodePort without source IP preservation
+
+Source IP preservation
+Direct Server Return (DSR)
+
+
+Advertising Services
+Lab
+
+Advertise External IPs
+Assign the service external IP
