@@ -1,0 +1,42 @@
+Summary
+05/07/2021
+ 
+
+Intro
+
+
+Week01
+Lab setup
+
+create 4x
+control
+node1
+node2
+host1
+
+
+host1
+k get nodes
+Not ready because	no networking	no CNI plugin installed
+
+
+install CNI plugin
+tigera  operator
+
+
+install Calico
+specify IP Pool
+
+
+confirm different calico pods
+calico node
+calico typha
+calico kube contoller
+
+
+Setup sample Application
+
+
+
+Week02
+Network Policy

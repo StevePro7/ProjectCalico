@@ -5,8 +5,8 @@ INTRO
  #academy
  
  
- Last spot
- https://courses.academy.tigera.io/courses/course-v1:tigera+CCO-L1+CCO-L1-2020/courseware/34335c1507344450bbda775dd4460119/bf1560778a764aeaada7bb423860bcce/?child=first
+Last spot
+https://courses.academy.tigera.io/courses/course-v1:tigera+CCO-L1+CCO-L1-2020/courseware/34335c1507344450bbda775dd4460119/bf1560778a764aeaada7bb423860bcce/?child=first
  
  
 Lab

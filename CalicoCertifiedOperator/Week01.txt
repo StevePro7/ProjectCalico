@@ -1,7 +1,39 @@
 Weekk01
 29/06/2021
- 
- 
+
+
+4x principles
+01. every pod gets its own IP address
+02. containers w/in pod share that iP address + can communicate freely w/ each other
+03. pods can communicate w/ other pods in the cluster using their IP addresses w/o NAT	IP addresses are preserved across pods
+04. network isolation that restricts what each pod can communicate w/ is defined using network policy
+
+IP per pod		like VM
+pod + container		like process
+
+
+Network Policy isolation`	means simple "flat" network
+
+
+Kubernetes does NOT have networking configured out-of-the-box
+must use CNI plugins to configure networking
+e.g.
+Calico Network CNI plugin
+Calico IPAM    CNI plugin
+
+
+DNS
+Example service			my-svc.my-namespace.svc.cluster-domain.example
+Pod in cluster			my-svc.my-namespace
+Pod in my-namespace		my-svc
+
+
+Outgoing NAT
+when pod tries to access outside the cluster the pod IP must be NAT'd to node IP
+esp.
+if pod network is an overlay network
+
+
 LAB
 Control (198.19.0.1) 		- Kubernetes control-plane node
 Node1   (198.19.0.2) 		- Kubernetes worker node
@@ -72,6 +104,9 @@ Managed Kubernetes Services
 Kubernets Installers + Distros
 
 
+Course uses operator based install
+
+
 Install Calico
 multipass shell host1
 
@@ -132,8 +167,8 @@ kubectl get all -n yaobank
 
 
 Customer	GUI		Nodeport
-Summary	BLL
-Database	DAL
+Summary		BLL		Cluster IP
+Database	DAL		Cluster IP
 
 
 Deployment status
