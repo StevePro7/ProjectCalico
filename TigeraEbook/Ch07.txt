@@ -1,0 +1,22 @@
+Ch07
+06/07/2021
+
+
+Pg.32
+eBPF
+a virtual machine embedded within the Linux kernel
+
+
+Types of eBPF program
+Tracing
+Traffic Control
+XDP		eXpress Data Path
+
+
+seccomp
+hook allows for syscalls to be policed in fine grained ways
+
+bpftool
+
+
+standard Linux dataplane is iptables based

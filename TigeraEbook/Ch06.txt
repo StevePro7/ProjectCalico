@@ -2,4 +2,36 @@ Ch06
 06/07/2021
 
 
-Pg.
+Pg.29
+Egress traffic handled at the networking level determined by the Kubernetes
+network implementation / CNI plugin being used by the cluster
+
+
+Limitation to Kubernetes Network Policy restricting access to external resources
+as specified by IP addresses or IP address ranges when the external resource
+changes then the IP addresses must be changed
+
+instead
+can use Calico Network Sets or Calico Enterprise domain names in policy rules
+
+
+Pg.30
+NAT outgoing
+Kubernetes egress NAT is used to allow pods to connect to services outside cluster
+if pods have IP address that are not routable outside cluster [e.g. overlay network]
+
+Calico can also use IP Pools to configure more granular level for particular IP
+address ranges and scope "non-routable" to be more tight than inside vs. outside cluster
+
+
+Egress gateway
+perform direct security role in terms of what connections it allows
+e.g
+sees connections from well known IP address [egress gateway] rather than
+from dynamic pod IP addresses they don't understand
+
+
+Calico allows you to control pod IP address ranges based on
+namespace, node, or individual pod level
+
+
