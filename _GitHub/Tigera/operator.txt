@@ -1,0 +1,25 @@
+Operator
+06/07/2021
+
+Go
+
+LINUX
+git clone https://github.com/tigera/operator.git
+
+
+Launch VS Code
+Open folder
+/home/stevepro/GitHubX/Tigera/operator
+
+Yes trust
+
+BUILD
+go build .
+./operator
+
+
+RUN / DEBUG
+F5
+Start Debugging
+
+
