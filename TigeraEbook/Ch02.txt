@@ -1,0 +1,16 @@
+Ch02
+06/07/2021
+
+
+Pg.10
+K8s has basic networking built in using kubenet
+but more common to use CNI plugins to build K8s networking
+
+
+
+Pg.11
+NAT outgoing
+pod map to node IP when want to route beyond node
+choose overlay network or have fully routable pods
+
+

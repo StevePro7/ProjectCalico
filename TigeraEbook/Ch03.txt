@@ -1,0 +1,26 @@
+Ch03
+06/07/2021
+
+
+Pg.13
+Kubernetes "flat" network
+
+Network policies abstracted from the network using label selectors
+rather than IP addresses or IP address ranges
+
+
+
+Pg.14
+Kubernetes does not enforce network policy but instead delegates
+network policy enforcement to CNI plugins
+
+
+Pg.15
+Calico network policy
+matches ServiceAccounts
+if using Istio + Envoy then also cryptographic identity
+
+
+Pg.16
+host interfaces
+"firewall" for a node

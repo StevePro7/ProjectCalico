@@ -1,0 +1,30 @@
+Ch04
+06/07/2021
+
+
+Pg.19
+Kubernetes service provide a way of abstracting access to a group of pods
+as a network service.  Group of pods backing each service is usually
+defined using a label selector
+
+
+Pg.22
+Advertising service IPs
+alternative to using NodePort or network LoadBalancer is
+advertise service IP addresses over BGP
+
+requires clusters to be running on underlying network that supports BGP
+i.e.
+on prem deployment w/ Top of Rack routers
+
+
+Pg.23
+Calico eBPF data plane
+preserves source IP to simplify network policy
+offers DSR [Direct Server Return] to reduce number of network hops
+provides load balancing independent of network topology
+reduced CPU + latency compared to kube-proxy
+
+
+https://www.projectcalico.org/introducing-the-calico-ebpf-dataplane
+https://www.projectcalico.org/hands-on-with-calicos-ebpf-service-handling

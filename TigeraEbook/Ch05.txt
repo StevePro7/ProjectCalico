@@ -1,0 +1,18 @@
+Ch05
+06/07/2021
+
+
+Pg.24
+Kubernetes Ingress
+builds on top of Kubernetes services to provide load balancing at the application layer
+mapping HTTP(S) requests w/ particular domains and can perform SSL termination
+
+
+Ingress controller responsible for monitoring Kubernetes ingress resources 
+provisioning / configuring one or more ingress load balancers to implement
+desired load balancing behavior
+
+
+Why Ingress?
+if you have multiple services outside the cluster each w/ own IP address then
+you may prefer to channel all access thru a single externai [Ingress] IP addr

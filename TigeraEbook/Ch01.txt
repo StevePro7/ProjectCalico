@@ -1,0 +1,28 @@
+Ch01
+06/07/2021
+
+
+Pg.7
+Subnet
+group of IP addresses w/in single L2 network
+in subnet packets can be sent btwn any pair of devices as single network hop
+
+Use L3 routing rules to send packets beyond single subnet
+
+
+Pg.8
+Overlay network
+allows network devices to communicate across an underlying network
+w/o underlying network having any knowledge of the devices connected to
+the overlay network
+
+
+Pg.9
+NAT
+process of mapping an IP address in a packet to a destination IP address
+as the packet passes through the device performing the NAT
+
+
+MTU
+Maximum Transmission Unit
+maximum size of the network packet that can be sent across the network link
