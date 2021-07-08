@@ -2,6 +2,8 @@ kubernetes-openapi
 08/07/2021
 
 Go
+COMPLETE
+
 
 LINUX
 git clone https://github.com/tigera/kubernetes-openapi.git

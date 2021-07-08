@@ -2,6 +2,8 @@ Operator
 06/07/2021
 
 Go
+COMPLETE
+
 
 LINUX
 git clone https://github.com/tigera/operator.git
