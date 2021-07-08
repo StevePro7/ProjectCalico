@@ -7,6 +7,7 @@ LINUX
 git clone https://github.com/tigera/operator.git
 
 
+01. VS Code
 Launch VS Code
 Open folder
 /home/stevepro/GitHubX/Tigera/operator
@@ -23,3 +24,26 @@ F5
 Start Debugging
 
 
+
+02. GoLand
+Launch GoLand
+Open
+/home/stevepro/GitHubX/Tigera/operator
+OK
+
+Open main.go
+Run menu
+Run ...
+go build main.go
+
+
+IMPORTANT
+Navigate to another main.go
+e.g.
+/home/stevepro/GitHubX/Tigera/operator/hack/gen-versions/main.go
+
+Ctrl + F12
+main()
+set breakpoint
+click triangle	next to func main()
+Debug
