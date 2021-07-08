@@ -47,3 +47,30 @@ main()
 set breakpoint
 click triangle	next to func main()
 Debug
+
+
+
+FILES
+amd64
+conf
+Dockerfile
+dockerignore
+generated
+gitignore
+go
+idx
+iml
+json
+md
+mod
+pack
+py
+sample
+sh
+sum
+svg
+tpl
+txt
+xml
+yaml
+yml
