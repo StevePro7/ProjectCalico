@@ -3,6 +3,9 @@ api
 
 Go
 
+LOTS OF ERRORS after opening this repo
+
+
 LINUX
 https://github.com/tigera/api.git
 
@@ -12,24 +15,50 @@ Launch VS Code
 Open folder
 /home/stevepro/GitHubX/Tigera/api
 
-Yes trust
+New Terminal
+find -L -type f -name 'main.go'
 
-BUILD
+cd examples
 go build .
-./operator
+ERRORS
 
 
-RUN / DEBUG
-F5
-Start Debugging
+go.mod
+k8s.io/apimachinery
 
+
+go thru all errors and go get dependencies
+
+go get k8s.io/apimachinery
+go get k8s.io/client-go/tools/clientcmd
+
+go get github.com/googleapis/gnostic/openapiv2
+go get k8s.io/api/storage/v1beta1
+
+go get k8s.io/client-go
+go get k8s.io/client-go/testing
+
+
+register.go
+~\Github\tigera\api\pkg\client\clientset_generated\internalclientset\scheme
+
+go: finding module for package github.com/tigera/api/pkg/apis/projectcalico/install
+github.com/tigera/api/pkg/client/clientset_generated/internalclientset/scheme imports
+        github.com/tigera/api/pkg/apis/projectcalico/install: no matching versions for query "latest"
+
+
+
+CANNOT get dependencies thus cannot build + run code
 
 
 02. GoLand
 Launch GoLand
 Open
-/home/stevepro/GitHubX/Tigera/operator
+/home/stevepro/GitHubX/Tigera/api
 OK
+
+README.md
+
 
 Open main.go
 Run menu

@@ -1,0 +1,28 @@
+Dependencies
+08/07/2021
+
+How do I know how to find the original source code of the depenencies?
+e.g.
+github.com/Tigera/api
+
+dependency
+~/go/pkg/mod/k8s.io/apimachinery@v0.21.2/pkg/apis/meta/v1/types.go
+
+Here is the source code
+https://github.com/kubernetes/apimachinery/blob/v0.21.2/pkg/apis/meta/v1/types.go
+
+Branch
+v0.21.2
+
+
+Q.
+How did I find this original source code?
+
+A.
+Easy - in the end I just Google'd and found Kubernetes repo
+apimachinery
+
+then navigate from there
+and choose corresponding branch
+e.g.
+v0.21.2

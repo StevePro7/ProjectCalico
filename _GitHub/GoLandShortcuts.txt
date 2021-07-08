@@ -16,3 +16,12 @@ Ctrl+F11	step out
 
 
 F12		goto definition
+
+
+Can I the fully qualified path printed in the tab w/o hovering over tab?
+Can I click something to get the auto generated list w/o Ctrl+F12?
+
+
+VS Code
+Paste
+Ctrl+V	NOT	Ctrl+Shift+V
