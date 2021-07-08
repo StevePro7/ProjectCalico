@@ -1,0 +1,18 @@
+TODO
+GoLand keyboard shortcuts
+08/07/2021
+
+Working
+Alt+Left	go back
+
+
+F5		Run w/  debugging
+Ctrl+F5		Run w/o debugging
+
+F9		set breakpoint
+F10		step over
+F11		step into
+Ctrl+F11	step out
+
+
+F12		goto definition

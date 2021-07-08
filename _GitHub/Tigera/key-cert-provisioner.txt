@@ -1,0 +1,87 @@
+key-cert-provisioner
+06/07/2021
+
+Go
+
+LINUX
+git clone https://github.com/tigera/key-cert-provisioner.git
+
+
+01. VS Code
+Launch VS Code
+Open folder
+/home/stevepro/GitHubX/Tigera/key-cert-provisioner
+
+find -L -type f -name 'main.go'
+./signer/main.go
+./cmd/main.go
+
+
+BUILD
+cd cmd
+go build .
+
+./cmd
+go run main.go
+
+FATA[0000] environment variable POD_NAMESPACE cannot be empty 
+exit status 1
+
+
+RUN / DEBUG
+set breakpoint
+./cmd/main.go
+
+F5
+Start Debugging
+
+
+REPEAT
+./signer/main.go
+
+cd ./signer
+go build .
+go run main.go
+
+F5
+Start debugging
+
+
+
+02. GoLand
+Launch GoLand
+Open
+/home/stevepro/GitHubX/Tigera/key-cert-provisioner
+OK
+
+Expand folder cmd
+right click main.go
+Open in | Terminal
+go build .
+go run main.go
+
+Click triangle
+Run menu
+Run
+Debug
+go build main.go
+
+
+REPEAT
+./signer/main.go
+
+
+FILES
+amd64
+gitignore
+go
+idx
+iml
+md
+mod
+pack
+sample
+sh
+sum
+xml
+yml

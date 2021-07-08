@@ -1,0 +1,76 @@
+api
+08/07/2021
+
+Go
+
+LINUX
+https://github.com/tigera/api.git
+
+
+01. VS Code
+Launch VS Code
+Open folder
+/home/stevepro/GitHubX/Tigera/api
+
+Yes trust
+
+BUILD
+go build .
+./operator
+
+
+RUN / DEBUG
+F5
+Start Debugging
+
+
+
+02. GoLand
+Launch GoLand
+Open
+/home/stevepro/GitHubX/Tigera/operator
+OK
+
+Open main.go
+Run menu
+Run ...
+go build main.go
+
+
+IMPORTANT
+Navigate to another main.go
+e.g.
+/home/stevepro/GitHubX/Tigera/operator/hack/gen-versions/main.go
+
+Ctrl + F12
+main()
+set breakpoint
+click triangle	next to func main()
+Debug
+
+
+
+FILES
+amd64
+conf
+Dockerfile
+dockerignore
+generated
+gitignore
+go
+idx
+iml
+json
+md
+mod
+pack
+py
+sample
+sh
+sum
+svg
+tpl
+txt
+xml
+yaml
+yml
