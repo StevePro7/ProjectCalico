@@ -1,0 +1,45 @@
+GoogleIdTokenVerifier
+08/07/2021
+
+Go
+
+LINUX
+git clone https://github.com/tigera/GoogleIdTokenVerifier.git
+
+
+01. VS Code
+Launch VS Code
+Open folder
+/home/stevepro/GitHubX/Tigera/GoogleIdTokenVerifier
+
+
+Terminal
+go test
+go mod init GoogleIdTokenVerifier
+go mod tidy
+
+go test
+./googletokenidverifire_test.go:8:9: assignment mismatch: 1 variable but Verify returns 2 values
+./googletokenidverifire_test.go:8:18: not enough arguments in call to Verify
+        have (string, string)
+        want (string, string, *http.Client)
+FAIL    GoogleIdTokenVerifier [build failed]
+
+
+
+02. GoLand
+/home/stevepro/GitHubX/Tigera/GoogleIdTokenVerifier
+
+
+
+Terminal
+go test
+go mod init GoogleIdTokenVerifier
+go mod tidy
+
+go test
+./googletokenidverifire_test.go:8:9: assignment mismatch: 1 variable but Verify returns 2 values
+./googletokenidverifire_test.go:8:18: not enough arguments in call to Verify
+        have (string, string)
+        want (string, string, *http.Client)
+FAIL    GoogleIdTokenVerifier [build failed]
