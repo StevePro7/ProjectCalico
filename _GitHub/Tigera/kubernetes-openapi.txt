@@ -1,0 +1,51 @@
+kubernetes-openapi
+08/07/2021
+
+Go
+
+LINUX
+git clone https://github.com/tigera/kubernetes-openapi.git
+
+
+01. VS Code
+Launch VS Code
+Open folder
+/home/stevepro/GitHubX/Tigera/kubernetes-openapi
+
+
+IMPORTANT
+this is a fork of the ENTIRE kubernetes github repo!
+https://github.com/kubernetes/kubernetes
+
+
+However, I tried this
+cd ~/GitHubX/Tigera
+git clone https://github.com/tigera/kubernetes-openapi.git
+cd kubernetes-openapi
+make
+
+
+01
+Launch VS Code
+Open folder
+/home/stevepro/GitHubX/Tigera/kubernetes-openapi
+find -L -type f -name 'main.go'
+
+e.g.
+./cmd/cloud-controller-manager
+F5
+
+
+02.
+Launch GoLand
+Open folder
+/home/stevepro/GitHubX/Tigera/kubernetes-openapi
+find -L -type f -name 'main.go'
+
+e.g.
+./cmd/cloud-controller-manager
+right click main.go
+Open in | Terminal
+go build .
+go run main.go
+F5
