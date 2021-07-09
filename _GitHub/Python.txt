@@ -1,0 +1,27 @@
+Python
+09/07/2021
+
+e.g.
+Tigera / operator
+generate-release-notes.py
+
+
+I setup PyCharm IDE on Linux to be similar to GoLand
+e.g.
+
+Install VS Code keymap
+Mapping VS Code default
+
+Now can F5 etc thru PyCharm
+
+
+Debug
+Run menu | Debugging Actions | Evaluate Expression
+
+OR
+Debugger tab
+Debug window
+Variables
+Watch
+click "+"
+can evaluate expression here also

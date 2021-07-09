@@ -1,7 +1,15 @@
 TODO
 GoLand keyboard shortcuts
-08/07/2021
 
+UPDATE
+09/07/2021
+GoLand_Shortcuts.txt
+E:\GitHub\StevePro7\Blogger\GoLang
+
+I made much better progress here + documented..
+
+
+08/07/2021
 Working
 Alt+Left	go back
 
