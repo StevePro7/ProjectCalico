@@ -1,0 +1,18 @@
+Questions
+1207/2021
+
+01.
+What happens if I get "Problems" and they won't be "fixed" with
+go mod tidy
+
+How to resolve problems?
+How to know who to speak to etc?
+
+
+02.
+What happens if I get changes in checked in source files
+e.g.
+go.sum
+
+Do I check these in?
+Surely not...

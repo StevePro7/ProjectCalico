@@ -1,19 +1,29 @@
-dockerrun
+felix
 12/07/2021
 
 Go
-//incomplete
+COMPLETE
 
 
 LINUX
-https://github.com/projectcalico/calicoctl.git
+https://github.com/projectcalico/felix.git
 
 
-SUMMARY
-I can build + run calicoctl binary from command line
-run + debug step thru the code BUT there are a lot of errors because
-I cannot import all the packages
-not sure why this still works on the command line
+AWESOME code base as there are *.h and *.c files
+e.g.
+icmp.h
+
+Which refer to the built in files
+e.g.
+/usr/include/linux/in.h
+i.e.
+#include <linux/in.h>
+
+
+Has a lot of code that is centered around eBPF
+e.g.
+https://github.com/projectcalico/felix/blob/master/dataplane/linux/xdp_state.go
+
 
 
 01.
@@ -21,27 +31,18 @@ GoLand
 open project
 
 Open folder
-/home/stevepro/GitHubX/ProjectCalico/calicoctl
+/home/stevepro/GitHubX/ProjectCalico/felix
 
 Ctrl + P
 main.go
-NOT FOUND
+/home/stevepro/GitHubX/ProjectCalico/felix/cmd/calico-bpf
 
 Terminal
-find -L -type f -name 'main.go'
-NOT FOUND
-
-
-Ctrl + Shift + F
-package main
-
-calicoctl.go
-/home/stevepro/GitHubX/ProjectCalico/calicoctl/calicoctl
-
-cd /home/stevepro/GitHubX/ProjectCalico/calicoctl/calicoctl
+cd /home/stevepro/GitHubX/ProjectCalico/felix/cmd/calico-bpf
 go build .
 
-./calicoctl
+Downloading
+./felix
 
 
 calicoctl.go
@@ -54,19 +55,14 @@ Run
 
 Launch VS Code
 Open folder
-/home/stevepro/GitHubX/ProjectCalico/calicoctl
+/home/stevepro/GitHubX/ProjectCalico/felix
 
 Ctrl + P
 main.go
-NOT FOUND
-
-Terminal
-find -L -type f -name 'main.go'
-NOT FOUND
+/home/stevepro/GitHubX/ProjectCalico/felix/cmd/calico-bpf
 
 
-PROBLEMS	7
-e.g.
-could not import github.com/projectcalico/calicoctl/v3/calicoctl/commands (cannot find package "github.com/projectcalico/calicoctl/v3/calicoctl/commands" in any of 
-	/usr/local/go/src/github.com/projectcalico/calicoctl/v3/calicoctl/commands (from $GOROOT)
-	/home/stevepro/go/src/github.com/projectcalico/calicoctl/v3/calicoctl/commands (from $GOPATH))
+Set breakpoint
+F5
+
+debug step thru the source code
