@@ -1,0 +1,26 @@
+kube-controllers
+12/07/2021
+
+Go
+//COMPLETE
+
+
+LINUX
+https://github.com/projectcalico/kube-controllers.git
+
+
+01.
+GoLand
+open project
+
+Open folder
+/home/stevepro/GitHubX/ProjectCalico/kube-controllers
+
+Ctrl + P
+main.go
+~/GitHubX/ProjectCalico/kube-controllers/cmd/kube-controllers
+
+go run main.go
+
+OR just
+F5
