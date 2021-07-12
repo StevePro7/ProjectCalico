@@ -1,0 +1,46 @@
+confd
+12/07/2021
+
+Go
+//COMPLETE
+
+
+LINUX
+https://github.com/projectcalico/confd.git
+
+
+01.
+GoLand
+open project
+
+Open folder
+/home/stevepro/GitHubX/ProjectCalico/confd
+
+Ctrl + P
+main.go
+NOT FOUND
+
+
+Ctrl + Shift + F
+package main
+
+confd.go
+/home/stevepro/GitHubX/ProjectCalico/confd
+
+
+Open in Terminal
+go build .
+
+
+confd.go
+Run | debug
+
+
+
+2021-07-12 20:54:10.733 [INFO][49066] confd/config.go 81: Skipping confd config file.
+2021-07-12 20:54:10.734 [INFO][49066] confd/config.go 113: Processing command line flags
+2021-07-12 20:54:10.734 [INFO][49066] confd/confd.go 30: Config: &config.Config{ConfDir:"/etc/confd", Interval:600, Noop:false, Prefix:"", SyncOnly:false, CalicoConfig:"", Onetime:false, KeepStageFile:false, Typha:syncclientutils.TyphaConfig{Addr:"", K8sServiceName:"", K8sNamespace:"kube-system", ReadTimeout:0, WriteTimeout:0, KeyFile:"", CertFile:"", CAFile:"", CN:"", URISAN:""}, TemplateConfig:template.Config{ConfDir:"", ConfigDir:"", KeepStageFile:false, Noop:false, Prefix:"", StoreClient:backends.StoreClient(nil), SyncOnly:false, TemplateDir:""}}
+2021-07-12 20:54:10.734 [INFO][49066] confd/run.go 17: Starting calico-confd
+2021-07-12 20:54:10.735 [ERROR][49066] confd/client.go 91: Failed to create main Calico client: invalid configuration: no configuration has been provided, try setting KUBERNETES_MASTER environment variable
+2021-07-12 20:54:10.735 [FATAL][49066] confd/run.go 20: invalid configuration: no configuration has been provided, try setting KUBERNETES_MASTER environment variable
+Process exiting with code: 0
