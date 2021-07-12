@@ -55,3 +55,11 @@ go: github.com/docker/distribution@v2.4.0-rc.1.0.20160419170423-cd27f179f2c1+inc
         contrib/docker-integration/generated_certs.d/localregistry:5441/ca.crt: malformed file path "contrib/docker-integration/generated_certs.d/localregistry:5441/ca.crt": invalid char ':'
         contrib/docker-integration/generated_certs.d/localregistry:5442/ca.crt: malformed file path "contrib/docker-integration/generated_certs.d/localregistry:5442/ca.crt": invalid char ':'
         [Truncated: too long.]
+
+
+GoLand
+https://sum.golang.org/lookup/github.com/docker/distribution@v2.4.0-rc.1.0.20160419170423-cd27f179f2c1+incompatible
+
+contrib/docker-integration/generated_certs.d/localregistry:5448/ca.crt: malformed file path "contrib/docker-integration/generated_certs.d/localregistry:5448/ca.crt": invalid char ':'
+
+ca.crt: malformed file path invalid char ':'
