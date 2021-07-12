@@ -1,0 +1,72 @@
+dockerrun
+12/07/2021
+
+Go
+//incomplete
+
+
+LINUX
+https://github.com/projectcalico/calicoctl.git
+
+
+SUMMARY
+I can build + run calicoctl binary from command line
+run + debug step thru the code BUT there are a lot of errors because
+I cannot import all the packages
+not sure why this still works on the command line
+
+
+01.
+GoLand
+open project
+
+Open folder
+/home/stevepro/GitHubX/ProjectCalico/calicoctl
+
+Ctrl + P
+main.go
+NOT FOUND
+
+Terminal
+find -L -type f -name 'main.go'
+NOT FOUND
+
+
+Ctrl + Shift + F
+package main
+
+calicoctl.go
+/home/stevepro/GitHubX/ProjectCalico/calicoctl/calicoctl
+
+cd /home/stevepro/GitHubX/ProjectCalico/calicoctl/calicoctl
+go build .
+
+./calicoctl
+
+
+calicoctl.go
+click triangle
+Run
+
+
+
+02. VS Code
+
+Launch VS Code
+Open folder
+/home/stevepro/GitHubX/ProjectCalico/calicoctl
+
+Ctrl + P
+main.go
+NOT FOUND
+
+Terminal
+find -L -type f -name 'main.go'
+NOT FOUND
+
+
+PROBLEMS	7
+e.g.
+could not import github.com/projectcalico/calicoctl/v3/calicoctl/commands (cannot find package "github.com/projectcalico/calicoctl/v3/calicoctl/commands" in any of 
+	/usr/local/go/src/github.com/projectcalico/calicoctl/v3/calicoctl/commands (from $GOROOT)
+	/home/stevepro/go/src/github.com/projectcalico/calicoctl/v3/calicoctl/commands (from $GOPATH))
