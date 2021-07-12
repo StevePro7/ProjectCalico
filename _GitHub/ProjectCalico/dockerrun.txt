@@ -1,0 +1,63 @@
+dockerrun
+12/07/2021
+
+Go
+//incomplete
+
+
+LINUX
+https://github.com/projectcalico/dockerrun.git
+
+
+01. VS Code
+Launch VS Code
+Open folder
+/home/stevepro/GitHubX/ProjectCalico/dockerrun
+
+Ctrl + P
+main.go
+NOT FOUND
+
+
+go build .
+No go.mod file
+
+
+Terminal
+go mod init dockerrun
+PROBLEMS	8
+
+go mod tidy
+
+go: finding module for package github.com/sirupsen/logrus
+go: finding module for package github.com/kelseyhightower/envconfig
+go: finding module for package github.com/projectcalico/dockerrun/pkg/set
+go: finding module for package github.com/projectcalico/dockerrun/pkg/utils
+go: finding module for package github.com/projectcalico/dockerrun/pkg/containers
+go: downloading github.com/projectcalico/dockerrun v0.0.0-20190205030154-9252b174aa32
+go: found github.com/projectcalico/dockerrun/pkg/set in github.com/projectcalico/dockerrun v0.0.0-20190205030154-9252b174aa32
+go: found github.com/projectcalico/dockerrun/pkg/utils in github.com/projectcalico/dockerrun v0.0.0-20190205030154-9252b174aa32
+go: found github.com/sirupsen/logrus in github.com/sirupsen/logrus v1.8.1
+go: found github.com/projectcalico/dockerrun/pkg/containers in github.com/projectcalico/dockerrun v0.0.0-20190205030154-9252b174aa32
+go: found github.com/kelseyhightower/envconfig in github.com/kelseyhightower/envconfig v1.4.0
+go: downloading golang.org/x/sys v0.0.0-20191026070338-33540a1f6037
+go: downloading github.com/stretchr/testify v1.2.2
+
+
+go build .
+No go files
+
+
+GoLand
+open project
+
+Open folder
+/home/stevepro/GitHubX/ProjectCalico/dockerrun
+
+Ctrl + P
+main.go
+NOT FOUND
+
+
+go build .
+No go files

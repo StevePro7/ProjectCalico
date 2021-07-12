@@ -2,11 +2,21 @@ calico-bgp-daemon
 12/07/2021
 
 Go
-//COMPLETE
-
+incomplete
 
 LINUX
 https://github.com/projectcalico/calico-bgp-daemon.git
+
+
+SUMMARY
+go mod init calico-bgp-daemon
+go mod tidy
+
+Problems	1
+go sun is out of sync with go mod
+Please update it by applying hte quick fix
+go list
+
 
 
 01. VS Code
