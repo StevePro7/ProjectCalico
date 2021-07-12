@@ -1,0 +1,57 @@
+calico-bgp-daemon
+12/07/2021
+
+Go
+//COMPLETE
+
+
+LINUX
+https://github.com/projectcalico/calico-bgp-daemon.git
+
+
+01. VS Code
+Launch VS Code
+Open folder
+/home/stevepro/GitHubX/ProjectCalico/calico-bgp-daemon
+
+Ctrl + P
+main.go
+
+
+PROBLEMS	26
+
+Terminal
+go mod init calico-bgp-daemon
+
+
+Error loading workspace
+err status 1
+
+go.mod
+go.sum is out of sync with go.mod. Please update it by applying the quick fix.go list
+
+can click light bulb and apply quick fix
+
+Hover over
+module calico-bgp-daemon
+
+Quick fix
+Update go.sum
+
+Close VS Code	crash?
+
+
+
+PROBLEMS	1
+go: cloud.google.com/go@v0.1.1-0.20160913182117-3b1ae45394a2: missing go.sum entry; to add it:
+        go mod download cloud.google.com/go
+
+
+go get go mod download cloud.google.com/go
+go mod tidy
+go: github.com/docker/distribution@v2.4.0-rc.1.0.20160419170423-cd27f179f2c1+incompatible: verifying go.mod: github.com/docker/distribution@v2.4.0-rc.1.0.20160419170423-cd27f179f2c1+incompatible/go.mod: reading https://sum.golang.org/lookup/github.com/docker/distribution@v2.4.0-rc.1.0.20160419170423-cd27f179f2c1+incompatible: 410 Gone
+        server response:
+        not found: create zip: contrib/docker-integration/generated_certs.d/localregistry:5440/ca.crt: malformed file path "contrib/docker-integration/generated_certs.d/localregistry:5440/ca.crt": invalid char ':'
+        contrib/docker-integration/generated_certs.d/localregistry:5441/ca.crt: malformed file path "contrib/docker-integration/generated_certs.d/localregistry:5441/ca.crt": invalid char ':'
+        contrib/docker-integration/generated_certs.d/localregistry:5442/ca.crt: malformed file path "contrib/docker-integration/generated_certs.d/localregistry:5442/ca.crt": invalid char ':'
+        [Truncated: too long.]
