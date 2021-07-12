@@ -16,3 +16,17 @@ go.sum
 
 Do I check these in?
 Surely not...
+
+
+
+03.
+There is SOOOOO much code so how do they decide what packages to use?
+e.g.
+cache.go
+/home/stevepro/GitHubX/ProjectCalico/typha/pkg/snapcache
+
+import
+github.com/Workiva/go-datastructures/trie/ctrie
+
+source code found here
+https://github.com/Workiva/go-datastructures/blob/master/trie/ctrie/ctrie.go

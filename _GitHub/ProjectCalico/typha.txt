@@ -1,0 +1,57 @@
+typha
+12/07/2021
+
+Go
+COMPLETE
+
+
+LINUX
+https://github.com/projectcalico/typha.git
+
+
+
+01.
+GoLand
+open project
+
+Open folder
+/home/stevepro/GitHubX/ProjectCalico/typha
+
+Ctrl + P
+main.go
+~/GitHubX/ProjectCalico/typha/cmd/calico-typha
+
+Terminal
+cd ~/GitHubX/ProjectCalico/typha/cmd/calico-typha
+go build .
+
+Downloading
+./typha
+
+
+calicoctl.go
+click triangle
+Run
+
+
+
+
+
+
+/*
+02. VS Code
+
+Launch VS Code
+Open folder
+/home/stevepro/GitHubX/ProjectCalico/felix
+
+Ctrl + P
+main.go
+/home/stevepro/GitHubX/ProjectCalico/felix/cmd/calico-bpf
+
+
+Set breakpoint
+F5
+
+debug step thru the source code
+*/
