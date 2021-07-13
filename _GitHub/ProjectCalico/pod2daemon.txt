@@ -1,4 +1,4 @@
-vpp-dataplane
+pod2daemon
 13/07/2021
 
 Go
@@ -6,7 +6,7 @@ COMPLETE
 
 
 LINUX
-https://github.com/projectcalico/vpp-dataplane.git
+https://github.com/projectcalico/pod2daemon.git
 
 
 
@@ -15,11 +15,11 @@ GoLand
 open project
 
 Open folder
-/home/stevepro/GitHubX/ProjectCalico/vpp-dataplane
+/home/stevepro/GitHubX/ProjectCalico/pod2daemon
 
 Ctrl + P
 main.go
-/home/stevepro/GitHubX/ProjectCalico/vpp-dataplane/vpp-manager
+/home/stevepro/GitHubX/ProjectCalico/vpp-dataplane/pod2daemon
 
 Terminal
 cd /home/stevepro/GitHubX/ProjectCalico/vpp-dataplane/vpp-manager/main.go
@@ -42,11 +42,20 @@ go build .
 
 Launch VS Code
 Open folder
-/home/stevepro/GitHubX/ProjectCalico/vpp-dataplane
+/home/stevepro/GitHubX/ProjectCalico/pod2daemon
 
 Ctrl + P
 main.go
-cd /home/stevepro/GitHubX/ProjectCalico/vpp-dataplane/vpp-manager/main.go
+NOT FOUND
+
+Ctrl + Shift + F
+package main
+/home/stevepro/GitHubX/ProjectCalico/pod2daemon/flexvol/flexvoldriver.go
+/home/stevepro/GitHubX/ProjectCalico/pod2daemon/nodeagent/nodeagent.go
+
+
+go run flexvoldriver.go
+Downloading
 
 
 Set breakpoint
