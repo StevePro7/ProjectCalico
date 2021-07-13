@@ -30,3 +30,18 @@ github.com/Workiva/go-datastructures/trie/ctrie
 
 source code found here
 https://github.com/Workiva/go-datastructures/blob/master/trie/ctrie/ctrie.go
+
+
+04.
+What if you open a repo that has no main.go or no package main
+e.g.
+libacalico-go
+
+how do you build / debug / run the source code?
+may be this is a "pure" library so you just write code and go test code?
+
+actually I think I worked this out:
+just debug step thru the code from corresponding test
+e.g.
+block_test.go
+/home/stevepro/GitHubX/ProjectCalico/libcalico-go/lib/backend/model/

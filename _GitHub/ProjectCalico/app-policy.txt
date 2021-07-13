@@ -1,0 +1,52 @@
+app-policy
+13/07/2021
+
+Go
+//incomplete
+
+
+LINUX
+https://github.com/projectcalico/app-policy.git
+
+
+01.
+GoLand
+open project
+
+Open folder
+/home/stevepro/GitHubX/ProjectCalico/app-policy
+
+Ctrl + P
+main.go
+NOT FOUND
+
+
+Ctrl + Shift + F
+package main
+
+/home/stevepro/GitHubX/ProjectCalico/app-policy/cmd/dikastes/dikastes.go
+/home/stevepro/GitHubX/ProjectCalico/app-policy/cmd/healthz/healthz.go
+
+
+AA.
+cd /home/stevepro/GitHubX/ProjectCalico/app-policy/cmd/dikastes
+go build .
+./dikastes
+
+cdd /home/stevepro/GitHubX/ProjectCalico/app-policy/cmd/healthz
+go build .
+./healthz
+
+
+
+02. VS Code
+
+Launch VS Code
+Open folder
+/home/stevepro/GitHubX/ProjectCalico/app-policy
+
+
+REPEAT
+or can just F5 from
+dikastes.go
+healthz.go

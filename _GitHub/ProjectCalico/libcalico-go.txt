@@ -43,3 +43,20 @@ Open folder
 
 
 REPEAT
+
+
+Actually I think I worked it out:
+e.g.
+main.go
+block_test.go
+/home/stevepro/GitHubX/ProjectCalico/libcalico-go/lib/backend/model
+
+Terminal
+go test
+
+OR
+click double triangle next to
+package model_test
+
+Debug
+set break point and step thru code...
