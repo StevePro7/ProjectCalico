@@ -45,3 +45,16 @@ just debug step thru the code from corresponding test
 e.g.
 block_test.go
 /home/stevepro/GitHubX/ProjectCalico/libcalico-go/lib/backend/model/
+
+
+05.
+How to debug step thru source code
+e.g.
+cni-plugin
+
+esp.
+when the debug filename is not in the list from switch statement
+calico.go
+
+panic: Unknown binary name: ___go_build_github_com_projectcalico_cni_plugin_cmd_calico
+panic: Unknown binary name: __debug_bin

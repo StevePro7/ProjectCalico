@@ -1,8 +1,8 @@
-app-policy
+cni-plugin
 13/07/2021
 
 Go
-//COMPLETE
+//incomplete
 
 
 LINUX
@@ -24,8 +24,12 @@ NOT FOUND
 Ctrl + Shift + F
 package main
 
-/home/stevepro/GitHubX/ProjectCalico/cni-plugin/cmd/calico/calico.go
+calico.go
+/home/stevepro/GitHubX/ProjectCalico/cni-plugin/cmd/calico/
 
+Terminal
+cd /home/stevepro/GitHubX/ProjectCalico/cni-plugin/cmd/calico/
+go build .
 
 
 
@@ -38,5 +42,7 @@ Open folder
 
 REPEAT
 or can just F5 from
-dikastes.go
-healthz.go
+calico.go
+
+
+Will panic because the debug executable filename not found in switch statement
