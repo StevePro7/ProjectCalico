@@ -1,0 +1,64 @@
+vpp-dataplane
+13/07/2021
+
+Go
+//COMPLETE
+
+
+LINUX
+https://github.com/projectcalico/vpp-dataplane.git
+
+
+
+01.
+GoLand
+open project
+
+Open folder
+/home/stevepro/GitHubX/ProjectCalico/vpp-dataplane
+
+Ctrl + P
+main.go
+/home/stevepro/GitHubX/ProjectCalico/vpp-dataplane/vpp-manager
+
+Terminal
+cd /home/stevepro/GitHubX/ProjectCalico/vpp-dataplane/vpp-manager/main.go
+go run main.go
+
+Downloading
+
+
+main.go
+click triangle
+Debug
+
+
+go build .
+./vpp-manager
+
+
+
+02. VS Code
+
+Launch VS Code
+Open folder
+/home/stevepro/GitHubX/ProjectCalico/vpp-dataplane
+
+Ctrl + P
+main.go
+cd /home/stevepro/GitHubX/ProjectCalico/vpp-dataplane/vpp-manager/main.go
+
+
+Set breakpoint
+F5
+
+debug step thru the source code
+
+
+CHANGES
+pool_sync.go
+119
+
+simplify code
+for key := range pools {
+}

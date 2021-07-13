@@ -1,0 +1,10 @@
+bird
+13/07/2021
+
+./build.sh
+
+Open in VS Code
+code cannot accept the #include files for some reason
+
+Quick fix
+does not seem to ensure that the code includes the header files
