@@ -1,0 +1,45 @@
+libcalico-go
+13/07/2021
+
+Go
+//COMPLETE
+
+
+LINUX
+https://github.com/projectcalico/libcalico-go.git
+
+
+01.
+GoLand
+open project
+
+Open folder
+/home/stevepro/GitHubX/ProjectCalico/libcalico-go
+
+Ctrl + P
+main.go
+NOT FOUND
+
+Ctrl + Shift + F
+package main
+
+NOT FOUND
+
+Terminal
+go build .
+
+
+go build .
+package github.com/projectcalico/libcalico-go: build constraints exclude all Go files in /home/stevepro/GitHubX/ProjectCalico/libcalico-go
+
+
+
+01.
+VS Code
+open project
+
+Open folder
+/home/stevepro/GitHubX/ProjectCalico/libcalico-go
+
+
+REPEAT
