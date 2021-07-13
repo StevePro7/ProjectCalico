@@ -1,46 +1,106 @@
 api
-08/07/2021
+13/07/2021
 
 Go
-COMPLETE
+incomplete
+
+LOTS OF ERRORS after opening this repo
 
 
 LINUX
-https://github.com/projectcalico/api.git
+https://github.com/tigera/api.git
 
 
 01. VS Code
 Launch VS Code
 Open folder
-/home/stevepro/GitHubX/ProjectCalico/api
+/home/stevepro/GitHubX/Tigera/api
 
 New Terminal
-Ctrl + P
-main.go
-/home/stevepro/GitHubX/ProjectCalico/api/examples/list-gnp
+find -L -type f -name 'main.go'
 
-PROBLEMS	2
+cd examples
+go build .
+ERRORS
+
+
 go.mod
 k8s.io/apimachinery
 
 
-cd /home/stevepro/GitHubX/ProjectCalico/api/examples/list-gnp
-go build .
+go thru all errors and go get dependencies
+
+go get k8s.io/apimachinery
+go get k8s.io/client-go/tools/clientcmd
+
+go get github.com/googleapis/gnostic/openapiv2
+go get k8s.io/api/storage/v1beta1
+
+go get k8s.io/client-go
+go get k8s.io/client-go/testing
 
 
-PROBLEMS	2
-go mod tidy
+register.go
+~\Github\tigera\api\pkg\client\clientset_generated\internalclientset\scheme
+
+go: finding module for package github.com/tigera/api/pkg/apis/projectcalico/install
+github.com/tigera/api/pkg/client/clientset_generated/internalclientset/scheme imports
+        github.com/tigera/api/pkg/apis/projectcalico/install: no matching versions for query "latest"
 
 
-./list-gnp
 
-F5
-debug step thru 
+CANNOT get dependencies thus cannot build + run code
+
 
 02. GoLand
 Launch GoLand
 Open
-/home/stevepro/GitHubX/ProjectCalico/api
+/home/stevepro/GitHubX/Tigera/api
 OK
 
-REPEAT as above
+README.md
+
+
+Open main.go
+Run menu
+Run ...
+go build main.go
+
+
+IMPORTANT
+Navigate to another main.go
+e.g.
+/home/stevepro/GitHubX/Tigera/operator/hack/gen-versions/main.go
+
+Ctrl + F12
+main()
+set breakpoint
+click triangle	next to func main()
+Debug
+
+
+
+FILES
+amd64
+conf
+Dockerfile
+dockerignore
+generated
+gitignore
+go
+idx
+iml
+json
+md
+mod
+pack
+py
+sample
+sh
+sum
+svg
+tpl
+txt
+xml
+yaml
+yml
