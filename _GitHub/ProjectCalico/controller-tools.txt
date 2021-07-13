@@ -1,12 +1,12 @@
-pod2daemon
+controller-tools
 13/07/2021
 
 Go
-//COMPLETE
+COMPLETE
 
 
 LINUX
-https://github.com/projectcalico/pod2daemon.git
+https://github.com/projectcalico/controller-tools.git
 
 
 
@@ -15,59 +15,21 @@ GoLand
 open project
 
 Open folder
-/home/stevepro/GitHubX/ProjectCalico/pod2daemon
+/home/stevepro/GitHubX/ProjectCalico/controller-tools
 
 Ctrl + P
 main.go
-/home/stevepro/GitHubX/ProjectCalico/vpp-dataplane/pod2daemon
+~/GitHubX/ProjectCalico/controller-tools/cmd/controller-gen
 
-Terminal
-cd /home/stevepro/GitHubX/ProjectCalico/vpp-dataplane/vpp-manager/main.go
-go run main.go
-
-Downloading
-
-
-main.go
-click triangle
-Debug
-
-
-go build .
-./vpp-manager
-
+e.g.
+go run ../helpgen/main.go paths=../../pkg/... generate:headerFile=../../boilerplate.go.txt,year=2019
 
 
 02. VS Code
 
 Launch VS Code
 Open folder
-/home/stevepro/GitHubX/ProjectCalico/pod2daemon
+/home/stevepro/GitHubX/ProjectCalico/controller-tools
 
 Ctrl + P
 main.go
-NOT FOUND
-
-Ctrl + Shift + F
-package main
-/home/stevepro/GitHubX/ProjectCalico/pod2daemon/flexvol/flexvoldriver.go
-/home/stevepro/GitHubX/ProjectCalico/pod2daemon/nodeagent/nodeagent.go
-
-
-go run flexvoldriver.go
-Downloading
-
-
-Set breakpoint
-F5
-
-debug step thru the source code
-
-
-CHANGES
-pool_sync.go
-119
-
-simplify code
-for key := range pools {
-}
