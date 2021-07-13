@@ -1,0 +1,51 @@
+app-policy
+13/07/2021
+
+Go
+//COMPLETE
+
+
+LINUX
+https://github.com/projectcalico/apiserver.git
+
+
+01.
+GoLand
+open project
+
+Open folder
+/home/stevepro/GitHubX/ProjectCalico/apiserver
+
+Ctrl + P
+main.go
+NOT FOUND
+
+
+Ctrl + Shift + F
+package main
+
+apiserver.go
+/home/stevepro/GitHubX/ProjectCalico/apiserver/cmd/apiserver
+
+
+apiserver.go
+Open in Terminal
+go run main.go
+
+Downloading...
+
+
+F5
+to debug
+
+
+02. VS Code
+
+Launch VS Code
+Open folder
+/home/stevepro/GitHubX/ProjectCalico/apiserver/cmd/apiserver
+
+
+REPEAT
+or can just F5 from
+apiserver.go
