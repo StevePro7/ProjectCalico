@@ -58,3 +58,18 @@ calico.go
 
 panic: Unknown binary name: ___go_build_github_com_projectcalico_cni_plugin_cmd_calico
 panic: Unknown binary name: __debug_bin
+
+
+06.
+C/C++ code bases
+e.g.
+bird
+
+How to resolve errors with include file paths not found
+despite the fact that they were part of
+${workspaceDirectory}
+
+
+07.
+Strategy for crash course "learning" quickly the tons + tons of code
+that is referenced in all the source code from std library to custom packages...!
