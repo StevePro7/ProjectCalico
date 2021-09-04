@@ -1,0 +1,9 @@
+cat <<EOF| kubectl apply -f - 
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    cni.projectcalico.org/ipv4pools: '["external-pool"]'
+  name: external-ns
+EOF
