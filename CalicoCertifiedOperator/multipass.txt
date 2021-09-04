@@ -1,0 +1,56 @@
+Multipass
+03/09/2021
+ 
+ 
+INSTALL
+Multiplass
+https://multipass.run
+
+sudo snap install multipass
+multipass launch --name foo
+multipass exec foo -- lsb_release -a
+
+multipass launch -n bar --cloud-init cloud-config.yaml
+// couldn't get working as couldn't find concrete yaml
+https://cloudinit.readthedocs.io/en/latest/topics/examples.html
+
+multipass stop foo
+multipass delete foo
+multipass purge
+
+Restart
+https://courses.academy.tigera.io/courses/course-v1:tigera+CCO-L1+CCO-L1-2020/courseware/34335c1507344450bbda775dd4460119/bf1560778a764aeaada7bb423860bcce/?child=first
+
+See option to open Multipass top right
+but the terminal is too small so instead launch std terminal
+multipass shell
+
+
+
+
+BASIC
+
+
+multipass list
+multipass launch -n test1
+multipass info test1
+multipass start --all
+
+multipass shell test1
+exit
+
+multipass delete test1
+multipass purge
+
+
+
+
+SETUP
+curl https://raw.githubusercontent.com/tigera/ccol1/main/control-init.yaml | multipass launch -n control -m 2048M 20.04 --cloud-init -
+curl https://raw.githubusercontent.com/tigera/ccol1/main/node1-init.yaml | multipass launch -n node1 20.04 --cloud-init -
+curl https://raw.githubusercontent.com/tigera/ccol1/main/node2-init.yaml | multipass launch -n node2 20.04 --cloud-init -
+curl https://raw.githubusercontent.com/tigera/ccol1/main/host1-init.yaml | multipass launch -n host1 20.04 --cloud-init -
+
+
+multipass shell host1
+kubectl get nodes -A
