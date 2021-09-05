@@ -18,3 +18,172 @@ Install Calico via Tigera Operator
 calico-typha: Typha is as a stateful proxy for the Kubernetes API server. It's used by every calico-node pod to query and watch Kubernetes resources without putting excessive load on the Kubernetes API server.  The Tigera Operator automatically scales the number of Typha instances as the cluster size grows.
 
 calico-kube-controllers: Runs a variety of Calico specific controllers that automate synchronization of resources. For example, when a Kubernetes node is deleted, it tidies up any IP addresses or other Calico resources associated with the node.
+
+
+Week02
+https://courses.academy.tigera.io/courses/course-v1:tigera+CCO-L1+CCO-L1-2020/courseware/6b2f1c92019f42af9abd3fa3d51e037d/f315f098595a4831a304239c046a5de7/?child=first
+
+Host endpoints
+what Calico calls a network policy that provides a firewall in front of each node network interfaces
+
+
+
+https://courses.academy.tigera.io/courses/course-v1:tigera+CCO-L1+CCO-L1-2020/courseware/6b2f1c92019f42af9abd3fa3d51e037d/deaaa1cd40e248e3a22ee971e34ccf94/?child=first
+
+calicoctl
+The calicoctl utility is used to create and manage Calico resource types, as well as allowing you to run a range of other Calico specific commands. In this specific case, we are creating a GlobalNetworkPolicy (GNP).
+
+
+Shift left
+delegating different levels of security trust to dev or other teams
+
+
+Calico CRD
+HostEndpoint
+interface on the node
+e.g.
+host endpoint applies to the node's interface to the underlying network: eth0
+
+interface: "*"
+corresponds to all network interfaces on the host
+e.g.
+those network interfaces connecting the host to the pods and the loopback interface
+
+
+https://courses.academy.tigera.io/courses/course-v1:tigera+CCO-L1+CCO-L1-2020/courseware/6b2f1c92019f42af9abd3fa3d51e037d/b7b0384d13814260bef8251e22bcf99d/?child=first
+
+Calico HostEndpoints Lab
+calicoctl get heps
+
+calicoctl patch kubecontrollersconfiguration default --patch='{"spec": {"controllers": {"node": {"hostEndpoint": {"autoCreate": "Enabled"}}}}}'
+
+IMPORTANT
+So we always recommend ensuring you have the correct failsafe ports configured before you start applying network policies to host endpoints!
+
+
+Week03
+https://courses.academy.tigera.io/courses/course-v1:tigera+CCO-L1+CCO-L1-2020/courseware/0dc0af9909434d779947452ded9f3adc/cfc3b1b92ad447e795f5aadcb52a4ec6/?child=first
+
+Linux network namepsace
+isolated copy of the Linux networking stack
+
+shell into customer POD
+
+ip addr
+ip -c link show up
+
+eth0 is a link to the host network namespace (indicated by link-netnsid 0). This is the pod's side of the virtual ethernet pair (veth pair) that connects the pod to the node’s host network namespace.
+The @if9 at the end of the interface name (on eth0) is the interface number for the other end of the veth pair, which is located within the host's network namespace itself.  In this example, interface number 9. Remember this number for later. You might want to write it down, because we will need to know this number when we take a look at the other end of the veth pair shortly.
+
+
+ip route
+
+NB: 169.254.1.1 is a dummy address used by Calico
+
+
+How Hosts See Connections to Pods
+
+IMPORTANT
+ssh node1
+
+ip link show up
+
+
+veth pair connects pod network namespace to the host [node] network namespace
+
+
+How Hosts Route Pod Traffic
+ssh node1
+ip route
+
+We can also see several routes labeled proto bird. These are routes to pods on other nodes that Calico has learned over BGP.
+
+The blackhole route tells Linux that if it can't find a more specific route for an individual IP in that block then it should discard the packet (rather than sending it out the default route to the network). Y
+
+
+Enabling Encryption
+calicoctl patch felixconfiguration default --type='merge' -p '{"spec":{"wireguardEnabled":true}}'
+calicoctl get node node1 -o yaml
+
+ssh node1
+ip addr | grep wireguard
+
+
+Disabling Encryption
+calicoctl patch felixconfiguration default --type='merge' -p '{"spec":{"wireguardEnabled":false}}'
+calicoctl get node node1 -o yaml
+
+
+Introduction to IP Pools
+IP POols
+Calico resources which define ranges of IP addresses that the Calico IPAM + IPAM CNI plugin can use
+
+
+KKubernetes Configuration
+
+The cluster pod CIDR is the range of IP addresses Kubernetes is expecting to be assigned to pods in the cluster.
+The services CIDR is the range of IP addresses that are used for the Cluster IPs of Kubernetes Sevices (the virtual IP that corresponds to each Kubernetes Service).
+
+kubectl cluster-info dump | grep -m 2 -E "service-cidr|cluster-cidr"
+
+
+Calico configuration
+calicoctl get ippools
+
+Note that these IP address ranges are CIDRs, not subnets. This distinction is a little subtle, but in a strict networking sense subnet implies L2 connectivity within the subnet, but the Kubernetes networking model is oriented around L3 connectivity.
+
+subnet	L2 connectivity
+K8s	L3 connectivity	networking model
+
+
+Create IP Pools with Different Scopes
+calicoctl get ippools 
+
+
+ BGP Peering
+ssh node1
+
+
+Add a BGP Peer
+ssh node1
+sudo calicoctl node status
+
+
+Configure a Namespace to use External Routable IP Addresses
+
+
+
+Check Calico IPAM allocations statistics
+calicoctl ipam show
+
+It can be a good idea to periodically check IP allocations statistics to check you have sized your IP pools appropriately, for example if you aren’t confident about the number of pods and whether your original sizing of the pools.
+
+
+QUIZ
+Overlay networks
+encapsulate pod to pod packets inside node to node packets
+can be implemented using IPIP
+can be implemented using VXLAN
+can be implemented using WireGuard with the added benefit of encryption
+
+WireGuard
+can be thought of as an overlay network with the added benefit of encryption
+uses state of the art encryption
+can be used by Calico to secure all pod to pod traffic over the underlying network
+
+Calico IP Pools
+define ranges of IP addresses that can be used for Calico IPAM
+define IP rnage specific network behaviors such as overlay modes or NAT outgoing
+can be constrained to only be used by specific nodes, namespaces, or pods
+define the block sizes to be used in BGP route aggregation
+
+BGP is
+a standards based routing protocol supported by most routers
+used to build the internet
+can be used between Calico nodes to share routes
+can be used to share routes between Calico and the underlying network
+can be used to share services IPs with the underlying network
+often used in on-prem or private cloud networks
+
+
+

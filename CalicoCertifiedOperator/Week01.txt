@@ -35,10 +35,10 @@ if pod network is an overlay network
 
 
 LAB
-Control (198.19.0.1) 		- Kubernetes control-plane node
-Node1   (198.19.0.2) 		- Kubernetes worker node
-Node2   (198.19.0.3) 		- Kubernetes worker node
-Host1   (198.19.15.254) 	- General purpose host
+Control (198.19.0.1) 		- Kubernetes control-plane node	10.255.255.1
+Node1   (198.19.0.2) 		- Kubernetes worker node		10.255.255.2
+Node2   (198.19.0.3) 		- Kubernetes worker node		10.255.255.3
+Host1   (198.19.15.254) 	- General purpose host			10.255.255.254
 
 
 Kubernetes cluster

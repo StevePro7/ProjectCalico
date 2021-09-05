@@ -107,7 +107,7 @@ Lab
 How Pods See the Network
 How Hosts See Connections to Pods
 cali...
-veth pai connect customer pod to the host network namespace
+veth pair connect customer pod to the host network namespace
 
 How Hosts Route Pod Traffic
 
