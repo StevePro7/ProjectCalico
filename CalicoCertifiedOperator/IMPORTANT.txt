@@ -186,4 +186,139 @@ can be used to share services IPs with the underlying network
 often used in on-prem or private cloud networks
 
 
+Week04
+Kube-proxy
+uses Linux iptables rules by default for load balancing
 
+other options
+IPVS
+eBPF
+
+
+Kube-Proxy Cluster IP Implementation
+kubectl get endpoints -n yaobank summary
+
+SSH into node1 so we can explore the iptables rules that kube-proxy has set up on that node
+ssh node1
+
+
+To make it easier to manage large numbers of iptables rules, groups of iptables rules can be grouped together into iptables chains.
+
+sudo iptables -v --numeric --table nat --list KUBE-SERVICES
+
+
+Each iptables chain consists of a list of rules that are executed in order until a rule matches. 
+
+KUBE-SERVICES -> KUBE-SVC-XXXXXXXXXXXXXXXX
+
+sudo iptables -v --numeric --table nat --list KUBE-SERVICES | grep -E summary
+
+
+checkout how load balancing works
+e.g.
+sudo iptables -v --numeric --table nat --list KUBE-SVC-OIQIZJVJK6E34BR4
+
+
+SVC	service
+SEP	service endpoint
+
+Service endpoint
+sudo iptables -v --numeric --table nat --list KUBE-SEP-MR2OHPODPKVEKHD4
+sudo iptables -v --numeric --table nat --list KUBE-SEP-KGQRHMYN3EBQMPXF
+
+rule performs DNAT that changes the destination IP from the service cluster IP
+to the IP address of the service endpoint backing pod
+
+after this standard Linux routing can handle forwarding the packet as before
+
+
+Recap
+kube-proxy iptables rules used to load balance traffic to summary pods exposed as service type
+ClusterIP
+
+recap packet being sent to clusterIP
+KUBE-SERVICES chain matches on the clusterIP and jumps to corresponding KUBE-SVC-XXXX chain
+KUBE-SVC-XXXX chain load balances the packet to random service endpoint KUBE-SEP-XXXX chain
+KUBE-SEP-XXXX chain DNAT the packet so it will get routed to the service endpoint [backing pod]
+
+
+Kube-Proxy NodePort Implementation
+kubectl get endpoints -n yaobank customer
+
+sudo iptables -v --numeric --table nat --list KUBE-SERVICES | grep KUBE-NODEPORTS
+
+
+ssh node1
+sudo iptables -v --numeric --table nat --list KUBE-SERVICES | grep KUBE-NODEPORTS
+
+sudo iptables -v --numeric --table nat --list KUBE-NODEPORTS
+
+
+KUBE-SVC-XXXX => KUBE-SEP-XXXX
+sudo iptables -v --numeric --table nat --list KUBE-SVC-PX5FENG4GZJTCELT
+
+single backing pod for customer SVC = no load balancing
+sudo iptables -v --numeric --table nat --list KUBE-SEP-UBXKSM3V2OSEF4IL
+
+
+secon rule performs the DNAT that changes the destination IP from the service clusterIP 
+to the IP address of the service endpoint backing pod
+
+
+Recap
+kube-proxy iptables rules used to load balance traffic to customer pods
+exposed as a service of type NodePort
+
+packet being sent to NodePort
+KUBE-SERVICES chain jumps to the KUBE-NODEPORTS chain
+
+KUBE-NODEPORTS chain matches on the NodePort and jumps to the corresponding KUBE-SVC-XXXX chain
+KUBE-SVC-XXXX chain load balances the packet to a random service endpoint KUBE-SEP-XXXX chain
+KUBE-SEP-XXXX chain DNAT the packet so it will get routed tot he service endpoint backing pod
+
+
+Introduction to Calico Native Service Handling
+
+About Calico eBPF dataplane
+is an alternative to the default standard Linux dataplane
+[which is iptables based]
+
+
+Lab
+2x terminals
+kubectl logs -n yaobank -l app=customer --follow
+
+curl 198.19.0.1:30180
+
+when traffic arrives from outside the cluster kube-proxy applies SNAT to the traffic
+on the ingress node from pod POV this makes the traffic appear to come from the ingress node
+
+SNAT is required to make sure the return traffic flows back trhu the same node so that
+NodePort DNAT can be undone
+
+
+if cluster configured to use an overlay [VXLAN, IPIP, WireGuard] then the SNAT would make the
+traffic appear to come from the IP address associated with the corresponding virtual interface
+on the ingress node
+
+
+Enable Calico eBPF
+apply configMap and restart the Tigera operator
+
+kubectl delete pod -n tigera-operator -l k8s-app=tigera-operator
+
+watch Calico pods
+watch kubectl get pods -n calico-system
+
+Disable kube-proxy
+calicoctl patch felixconfiguration default --patch='{"spec": {"bpfKubeProxyIptablesCleanupEnabled": false}}'
+
+Switch on eBPF mode
+calicoctl patch felixconfiguration default --patch='{"spec": {"bpfEnabled": true}}'
+
+
+kubectl delete pod -n yaobank -l app=customer
+kubectl delete pod -n yaobank -l app=summary
+
+
+Source IP preservation
