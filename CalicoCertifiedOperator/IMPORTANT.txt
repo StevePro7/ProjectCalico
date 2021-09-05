@@ -322,3 +322,75 @@ kubectl delete pod -n yaobank -l app=summary
 
 
 Source IP preservation
+kubectl logs -n yaobank -l app=customer --follow
+
+curl 198.19.0.1:30180
+doesn't work
+
+
+Snoop traffic without DSR
+ssh control
+sudo tcpdump -nvi any 'tcp port 30180'
+
+
+other terminal
+curl 198.19.0.1:30180
+
+
+Switch on DSR
+calicoctl patch felixconfiguration default --patch='{"spec": {"bpfExternalServiceMode": "DSR"}}'
+
+curl 198.19.0.1:30180
+should now only see traffic in one direction
+from host1 to the node port on the control node
+198.19.15.254 => 198.19.0.1
+
+
+Introduction to Advertising Services
+
+Advertise Cluster IP Range
+ip route
+
+apply BGP configuration
+calicoctl get bgpconfig default -o yaml
+
+
+ip route
+ECMP
+Equal Cost Multi Path
+
+kubectl get svc -n yaobank customer
+
+curl clusterIP
+curl 198.19.40.178
+
+Advertising Cluster IPs in this way provides an alternative to accessing services via Node Ports
+
+
+Advertise External IPs
+
+Update BGP configuration
+calicoctl patch BGPConfig default --patch \
+   '{"spec": {"serviceExternalIPs": [{"cidr": "198.19.48.0/20"}]}}'
+
+ip route
+
+
+Assign the service external IP
+kubectl patch svc -n yaobank customer -p  '{"spec": {"externalIPs": ["198.19.48.10"]}}'
+
+kubectl get svc -n yaobank
+NOW customer NodePort has an External IP
+
+curl 198.19.48.10
+the service has been made available outside the cluster via BGP routing and 
+network load balancing
+
+
+Review
+5x different ways to conntect pods from outside the cluster
+1. via standard NodePort on a specific node
+2. direct to the pod IP address by using externally routable IP Pools
+3. advertizing the service cluster IP range
+4. advertizing individual cluster IPs
+5. advertizing service external-IPs
