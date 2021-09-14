@@ -45,10 +45,27 @@ Downloading
 ./felix
 
 
+calico-felix.go
+go mod tidy
+go build .
+
+
+fatal: could not read Username for 'https://github.com': terminal prompts disabled
+
+Solution?
+https://medium.com/easyread/today-i-learned-fix-go-get-private-repository-return-error-terminal-prompts-disabled-8c5549d89045
+
+
+
 calicoctl.go
 click triangle
 Run
 
+
+Launch GoLand
+File | Settings
+Go | GOROOT	Go 1.17	/usr/local/go			/usr/local/go/bin/go
+Go | GOPATJ		~/go-public/felix
 
 
 02. VS Code
@@ -66,3 +83,8 @@ Set breakpoint
 F5
 
 debug step thru the source code
+
+
+Debugging golang in docker
+https://blog.jetbrains.com/go/2020/05/06/debugging-a-go-application-inside-a-docker-container
+
