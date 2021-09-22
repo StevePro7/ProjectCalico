@@ -6,7 +6,7 @@ Go
 
 
 LINUX
-https://github.com/projectcalico/cni-plugin.git
+https://github.com/projectcalico/app-policy
 
 
 01.
@@ -14,17 +14,28 @@ GoLand
 open project
 
 Open folder
-/home/stevepro/GitHubX/ProjectCalico/cni-plugin
+/home/stevepro/GitHubX/ProjectCalico/app-policy
 
 Ctrl + P
 main.go
-NOT FOUND
+lots of entries!
 
 
 Ctrl + Shift + F
 package main
 
-/home/stevepro/GitHubX/ProjectCalico/cni-plugin/cmd/calico/calico.go
+/home/stevepro/GitHubX/ProjectCalico/app-policy/cmd
+
+dikastes/dikastes.go
+healthz/healthz.go
+
+
+cd /home/stevepro/GitHubX/ProjectCalico/app-policy/cmd/dikastes
+go install
+
+
+make
+make all
 
 
 
