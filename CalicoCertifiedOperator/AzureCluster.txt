@@ -50,5 +50,10 @@ k describe po -n calico-system calico-node-6r7p
 Controlled By:  DaemonSet/calico-node
 
 
-
 k describe po -n calico-system calico-typha-59f8f467bd-2lkcv 
+
+
+Week02
+
+k get networkpolicy
+k describe network policy
