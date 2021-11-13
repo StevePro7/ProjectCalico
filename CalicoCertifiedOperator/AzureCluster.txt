@@ -1,0 +1,54 @@
+Azure cluster
+13/11/2021
+ 
+BZ provision AKS cluster
+
+Week01
+Installing Calico for the Lab
+
+k get pods -n tigera-operator
+k describe po -n tigera-operator tigera-operator-7ccdb4d96d-sn2d7 
+
+
+k get installation
+k describe installation
+
+kubectl get tigerastatus/calico
+
+
+k get po -n calico-system
+calico-kube-controllers-965db584-pd2vn   1/1     Running   0          9d
+calico-node-6r7ps                        1/1     Running   0          9d
+calico-node-kxt4z                        1/1     Running   0          9d
+calico-node-mh4gs                        1/1     Running   0          9d
+calico-typha-59f8f467bd-2lkcv            1/1     Running   0          9d
+calico-typha-59f8f467bd-87gd5            1/1     Running   0          9d
+calico-typha-59f8f467bd-skr2f            1/1     Running   0          9d
+
+
+calico node
+runs on every K8s cluster node as a Daemonset
+responsible for 
+- enforcing network policy 
+- setting up routes
+- managing any virtual interfaces for IPIP, VXLAN or WireGuard
+
+
+calico-typha
+stateful proxy [replicaset] for K8s API server
+used by every calico-node pod to query and watch K8s resources w/o excessive load on API server
+tigera-operator auto scales Typha instances as the cluster size grows
+
+
+calico-kube-controllers
+runs Calico specific controllers that automate sync resources
+e.g. when K8s node is deleted cbc tidies IP addresses + other Calico resources assoc. w/ node
+
+
+How do we know calico-node is a Daemonset?
+k describe po -n calico-system calico-node-6r7p
+Controlled By:  DaemonSet/calico-node
+
+
+
+k describe po -n calico-system calico-typha-59f8f467bd-2lkcv 
