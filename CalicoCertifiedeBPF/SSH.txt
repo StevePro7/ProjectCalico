@@ -1,0 +1,26 @@
+SSH
+20/11/2021
+
+ENABLE ROOT LOGIN OVER SSH TO MULTIPASS VIRTUAL MACHINES
+https://www.tech-otaku.com/vps/enable-root-login-over-ssh-to-multipass-virtual-machines
+
+
+multipass list
+
+multipass exec ccol2ebpf -- whomami
+ubuntu
+
+
+multipass shell ccol2ebpf
+ifconfig
+10.80.26.77
+
+
+/var/snap/multipass/common/data/multipassd/ssh-keys/id_rsa
+
+
+sudo ssh-keygen -R 10.80.26.77 -f /var/root/.ssh/known_hosts
+
+
+
+https://dev.to/josuebustos/vs-code-remote-ssh-multipass-dn8

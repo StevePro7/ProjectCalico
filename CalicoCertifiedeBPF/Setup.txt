@@ -10,8 +10,7 @@ multipass version
 
 
 Week 1
-Week 1	Lab Setup	
-
+Week 1	Lab Setup
 #3.	Building and Validating the Lab Environment
 
 multipass launch 21.04 --disk 10G -n ccol2ebpf
