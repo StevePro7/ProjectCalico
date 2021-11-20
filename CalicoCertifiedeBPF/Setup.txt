@@ -381,8 +381,20 @@ kubeadm join 10.240.0.11:6443 --token 7htdyq.54i4neodpl63r18c --discovery-token-
 =
 
 
-for i in `gcloud compute instances list --filter="name~ccol2ebpf-worker" | grep -v NAME | awk '{print $1}'`; do gcloud compute ssh --zone us-central1-a ubuntu@$i --command
-
- "sudo kubeadm join 10.240.0.11:6443 --token 7htdyq.54i4neodpl63r18c --discovery-token-ca-cert-hash sha256:889c8851fd130ceded5c069754dbecd86c30c81e2cba2df253d803e232c9318e" ; done
+for i in `gcloud compute instances list --filter="name~ccol2ebpf-worker" | grep -v NAME | awk '{print $1}'`; do gcloud compute ssh --zone us-central1-a ubuntu@$i --command  "sudo kubeadm join 10.240.0.11:6443 --token 7htdyq.54i4neodpl63r18c --discovery-token-ca-cert-hash sha256:889c8851fd130ceded5c069754dbecd86c30c81e2cba2df253d803e232c9318e" ; done
 
 
+kubectl get nodes
+NAME                   STATUS     ROLES                  AGE     VERSION
+ccol2ebpf-controller   NotReady   control-plane,master   8m38s   v1.21.4
+ccol2ebpf-worker-0     NotReady   <none>                 34s     v1.21.4
+ccol2ebpf-worker-1     NotReady   <none>                 23s     v1.21.4
+ccol2ebpf-worker-2     NotReady   <none>                 13s     v1.21.4
+
+
+built Healthy cluster
+but has not networking	i.e. no CNI
+which explains status "NotReady"
+
+kubectl get pods -A
+coredns pods are Pending waiting for node with networking to deploy on to
