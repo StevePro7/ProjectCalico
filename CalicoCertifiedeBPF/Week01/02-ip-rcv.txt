@@ -1,0 +1,12 @@
+Week 1	
+20/11/2021
+
+Writing an eBPF Program
+#6.	Copying and Renaming the Existing Programs
+
+
+for i in bootstrap*; do cp "$i" "$(echo "$i" | sed s/bootstrap/catchrootprocessstarts/)"; done && sed -i 's/bootstrap/catchrootprocessstarts/g' catchrootprocessstarts* && sed -i 's/BOOTSTRAP/catchrootprocessstarts/g' catchrootprocessstarts*; rm catchrootprocessstarts
+
+
+#7.	Compiling and Running the Renamed Programs
+APPS = minimal bootstrap uprobe kprobe fentry catchrootprocessstarts

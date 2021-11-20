@@ -5,6 +5,9 @@ Setup
 Uninstall Multipass	if installed
 Ubuntu Software Center	install Multipass
 
+multipass list
+multipass version
+
 
 Week 1
 Week 1	Lab Setup	
