@@ -1,0 +1,27 @@
+Resources
+19/11/2021
+
+Reference:
+Week 1	Understanding the Tools + Techn
+#2.	So, Why has this Course been using LibBPF, not BCC?
+Andrii Nakryiko at Facebook BCC and LibBPF
+
+https://facebookmicrosites.github.io/bpf/blog/
+https://facebookmicrosites.github.io/bpf/blog/2020/02/20/bcc-to-libbpf-howto-guide.html
+
+https://github.com/anakryiko
+https://qconlondon.com/system/files/presentation-slides/thomas_graf_-_ebpf_-_rethinking_the_linux_kernel.pdf
+
+
+
+Week1	eBPF in Kubernetes
+#5.	Observability
+BPF Performance Tools (book)
+https://www.brendangregg.com/bpf-performance-tools-book.html
+
+BPF Compiler Collection (BCC)
+https://github.com/iovisor/bcc
+
+#6.	Metrics
+ebpf_exporter
+https://github.com/cloudflare/ebpf_exporter

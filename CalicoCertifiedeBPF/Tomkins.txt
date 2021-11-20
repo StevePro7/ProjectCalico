@@ -6,3 +6,9 @@ Week #1 "Compiling and Running the Renamed Programs" maybe "stress" importance o
 
 Cannot run bpftool on personal Linux PC as I have Ubuntu 20.04
 will have to do the course in one sitting??
+
+
+
+Inconsistency:
+Week 1 Enter LibBPF	says BTF Type Format (BTF)
+Week 1 BTF		says BPF Type Format, or BTF

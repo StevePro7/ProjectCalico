@@ -29,3 +29,13 @@ make
 LIBBPF	BOOTSTRAP
 cd ../../libbpf-bootstrap/
 git submodule update --init --recursive
+
+
+
+Week 1	Enter LibBPF
+BTF
+BTF Type Format		kernel features
+https://www.kernel.org/doc/html/latest/bpf/btf.html#introduction
+
+Week 1	Kernel Security and Auditing
+LSM	Linux Security Modules

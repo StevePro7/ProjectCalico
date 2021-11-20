@@ -24,3 +24,17 @@ sudo ssh-keygen -R 10.80.26.77 -f /var/root/.ssh/known_hosts
 
 
 https://dev.to/josuebustos/vs-code-remote-ssh-multipass-dn8
+
+
+multipass exec ccol2ebpf -- lsb_release --description
+
+multipass info ccol2ebpf
+
+
+/var/snap/multipass/common/data/multipassd/ssh-keys/id_rsa
+
+
+SUMMARY
+setup is like previous role
+but maybe not worth it if I have to re-setup everytime 
+uninstall / reinstall Multipass
