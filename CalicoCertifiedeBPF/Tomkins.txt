@@ -1,0 +1,8 @@
+19/11/2021
+Hi @Chris Tomkins - it's late but I'm really keen to kick on w/ the eBPF course so here are some "thoughts" as I progress...  
+
+Week #1 "Compiling and Running the Renamed Programs" maybe "stress" importance of sudo first e.g. sudo ./bootstrap otherwise may get surprise on error Failed to increase RLIMIT_MEMLOCK limit!   ... Week #1 "Writing a Kernel Probel for Tracing" maybe specify kernel version before hand?  I updated to 5.15.2 before course and was prompted to update linux-tools and linux-cloud tools
+
+
+Cannot run bpftool on personal Linux PC as I have Ubuntu 20.04
+will have to do the course in one sitting??
