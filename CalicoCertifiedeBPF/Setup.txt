@@ -139,3 +139,81 @@ Creating firewall...\u2839Created [https://www.googleapis.com/compute/v1/project
 Creating firewall...done.                                                                                
 NAME                          NETWORK        DIRECTION  PRIORITY  ALLOW                 DENY  DISABLED
 ccol2ebpf-vpc-allow-external  ccol2ebpf-vpc  INGRESS    1000      tcp:22,tcp:6443,icmp        False
+
+
+
+gcloud compute instances create ccol2ebpf-controller \
+    --async \
+    --boot-disk-size 200GB \
+    --can-ip-forward \
+    --image ubuntu-2004-focal-v20210908 \
+    --image-project ubuntu-os-cloud \
+    --machine-type n1-standard-2 \
+    --private-network-ip 10.240.0.11 \
+    --scopes compute-rw,storage-ro,service-management,service-control,logging-write,monitoring \
+    --subnet ccol2ebpf-subnet \
+    --zone us-central1-a \
+    --tags ccol2ebpf,controller
+
+NOTE: The users will be charged for public IPs when VMs are created.
+Instance creation in progress for [ccol2ebpf-controller]: https://www.googleapis.com/compute/v1/projects/steveproebpf/zones/us-central1-a/operations/operation-1637417979566-5d13915055ae9-6607b430-a1bc89bc
+Use [gcloud compute operations describe URI] command to check the status of the operation(s).
+
+
+87.198.108.60/32
+https://www.googleapis.com/compute/v1/projects/steveproebpf/zones/us-central1-a/operations/operation-1637417979566-5d13915055ae9-6607b430-a1bc89bc
+
+
+gcloud compute operations describe https://www.googleapis.com/compute/v1/projects/steveproebpf/zones/us-central1-a/operations/operation-1637417979566-5d13915055ae9-6607b430-a1bc89bc
+
+
+id: '2110875892597439763'
+insertTime: '2021-11-20T06:19:41.078-08:00'
+kind: compute#operation
+name: operation-1637417979566-5d13915055ae9-6607b430-a1bc89bc
+operationType: insert
+progress: 100
+selfLink: https://www.googleapis.com/compute/v1/projects/steveproebpf/zones/us-central1-a/operations/operation-1637417979566-5d13915055ae9-6607b430-a1bc89bc
+startTime: '2021-11-20T06:19:41.710-08:00'
+status: DONE
+targetId: '552914696822635795'
+targetLink: https://www.googleapis.com/compute/v1/projects/steveproebpf/zones/us-central1-a/instances/ccol2ebpf-controller
+user: steven_boland@hotmail.com
+warnings:
+- code: DISK_SIZE_LARGER_THAN_IMAGE_SIZE
+  data:
+  - key: disk_size_gb
+    value: '200'
+  - key: image_size_gb
+    value: '10'
+  message: "Disk size: '200 GB' is larger than image size: '10 GB'. You might need\
+    \ to resize the root repartition manually if the operating system does not support\
+    \ automatic resizing. See https://cloud.google.com/compute/docs/disks/add-persistent-disk#resize_pd\
+    \ for details."
+zone: https://www.googleapis.com/compute/v1/projects/steveproebpf/zones/us-central1-a
+
+
+
+Create 3x VMs
+for i in 0 1 2; do
+  gcloud compute instances create ccol2ebpf-worker-${i} \
+    --async \
+    --boot-disk-size 200GB \
+    --can-ip-forward \
+    --image ubuntu-2004-focal-v20210908 \
+    --image-project ubuntu-os-cloud \
+    --machine-type n1-standard-2 \
+    --private-network-ip 10.240.0.2${i} \
+    --scopes compute-rw,storage-ro,service-management,service-control,logging-write,monitoring \
+    --subnet ccol2ebpf-subnet \
+    --zone us-central1-a \
+    --tags ccol2ebpf,worker
+done
+
+
+gcloud compute instances list --filter="name~ccol2ebpf"
+
+
+Week 2	Deploy Calico w/ eBPF
+#4	Using Kubeadm To Bootstrap a Cluster
+for i in `gcloud compute instances list --filter="name~ccol2ebpf" | grep -v NAME | awk '{print $1}'`; do echo $i; done
