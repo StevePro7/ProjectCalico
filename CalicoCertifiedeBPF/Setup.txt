@@ -14,7 +14,6 @@ Week 1	Lab Setup
 #3.	Building and Validating the Lab Environment
 
 multipass launch 21.04 --disk 10G -n ccol2ebpf
-
 multipass shell ccol2ebpf
 
 
@@ -32,10 +31,51 @@ git submodule update --init --recursive
 
 
 
-Week 1	Enter LibBPF
-BTF
-BTF Type Format		kernel features
-https://www.kernel.org/doc/html/latest/bpf/btf.html#introduction
+Week 2	Installing the Tools for GCP and Kubernetes on Your VM
 
-Week 1	Kernel Security and Auditing
-LSM	Linux Security Modules
+multipass launch 21.04 --disk 10G -n ccol2ebpf
+multipass shell ccol2ebpf
+
+sudo apt update
+sudo apt install -y python-is-python3
+
+ssh-keygen -f ~/.ssh/google_compute_engine -N "" -b 4096
+
+KUBECTL
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+CALICOCTL
+curl -o calicoctl -O -L  "https://github.com/projectcalico/calicoctl/releases/download/v3.20.0/calicoctl"
+sudo install -o root -g root -m 0755 calicoctl /usr/local/bin/calicoctl
+
+
+GOOGLE SDK
+curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-356.0.0-linux-x86_64.tar.gz
+gunzip google-cloud-sdk-356.0.0-linux-x86_64.tar.gz
+tar xvf google-cloud-sdk-356.0.0-linux-x86_64.tar
+./google-cloud-sdk/install.sh
+
+exit
+multipass shell ccol2ebpf
+
+
+Week 2	Initialising and Authenticating to GCP
+./google-cloud-sdk/bin/gcloud init
+
+Launch browser
+Login into Google
+steven_boland@hotmail.com
+
+Copy + paste URL into browser
+Copy + paste verification code
+
+
+gcloud auth login
+gcloud config set project steveproebpf
+gcloud config list
+
+
+Weej 2	Deploy Calico w/ eBPF
+#3	Setting up some Basic Networking and Virtual Machines
+gcloud compute project-info add-metadata --metadata google-compute-default-region=us-central1,google-compute-default-zone=us-central1-a
