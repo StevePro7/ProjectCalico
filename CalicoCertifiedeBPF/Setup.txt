@@ -470,3 +470,35 @@ kubectl patch installation.operator.tigera.io default --type merge -p '{"spec":{
 
 kubectl get pods -n=calico-system
 At this point, your Kubernetes cluster should be healthy and running the Calico eBPF data plane.
+
+
+#8	Testing Performance with Calico’s eBPF Data Plane
+k8s-bench-suite/knb -v -cn ccol2ebpf-worker0 -sn ccol2ebpf-worker1
+
+
+Week 2	Intro to Online Boutique
+#1	Deploying Online Boutique
+
+git clone https://github.com/GoogleCloudPlatform/microservices-demo.git
+
+
+kubectl apply -f microservices-demo/release/kubernetes-manifests.yaml
+
+kubectl get pods -o wide
+
+
+kubectl get services | grep frontend
+
+
+ip addr | grep global
+    inet 10.80.26.77/24 brd 10.80.26.255 scope global ens3
+
+
+10.80.26.77
+kubectl port-forward service/frontend 8381:80 --address 10.80.26.77
+
+
+Launch browser
+http://10.80.26.77:8381
+
+exit

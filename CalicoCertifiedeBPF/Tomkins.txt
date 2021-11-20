@@ -26,3 +26,29 @@ gcloud config list
 
 BUT on my personal account
 I had to setup billing
+
+
+Week 2	Deploy Calico with eBPF on Upstream Kubernetes
+#8	Testing Performance with Calico’s eBPF Data Plane
+
+Does this text need to be updated?
+TBC - IF YOU'RE TESTING THE COURSE, PLEASE GET IN TOUCH WITH CHRIS TOMKINS ABOUT THIS...
+
+
+Weird - all pods were running but I get error:
+ubuntu@ccol2ebpf:~$ k8s-bench-suite/knb -v -cn ccol2ebpf-worker0 -sn ccol2ebpf-worker1
+2021-11-20 15:19:39 [INFO] Client node will be 'ccol2ebpf-worker0'
+2021-11-20 15:19:39 [INFO] Server node will be 'ccol2ebpf-worker1'
+2021-11-20 15:19:39 [INFO] Deploying server monitor on node ccol2ebpf-worker1
+2021-11-20 15:19:40 [INFO] Waiting for server monitor to be running
+2021-11-20 15:20:11 [ERROR] Pod knb-monitor-server-21288 is still in Pending state, please check node name
+2021-11-20 15:20:11 [FATAL] Failed to start server monitor pod
+
+
+Week 2	Intro to Online Boutique
+#1	Deploying Online Boutique
+
+kubectl get pods -o wide
+
+I don't think this the correct output - it looks like the output from 
+kubectl get pods -A -o wide
