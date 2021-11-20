@@ -216,4 +216,173 @@ gcloud compute instances list --filter="name~ccol2ebpf"
 
 Week 2	Deploy Calico w/ eBPF
 #4	Using Kubeadm To Bootstrap a Cluster
+
 for i in `gcloud compute instances list --filter="name~ccol2ebpf" | grep -v NAME | awk '{print $1}'`; do echo $i; done
+
+for i in `gcloud compute instances list --filter="name~ccol2ebpf" | grep -v NAME | awk '{print $1}'`; do gcloud compute ssh ubuntu@$i --zone us-central1-a --command "echo \"Hello\""; done
+
+
+ubuntu@ccol2ebpf:~$ gcloud compute instances list
+NAME                  ZONE           MACHINE_TYPE   PREEMPTIBLE  INTERNAL_IP  EXTERNAL_IP     STATUS
+ccol2ebpf-controller  us-central1-a  n1-standard-2               10.240.0.11  34.135.81.125   RUNNING
+ccol2ebpf-worker-0    us-central1-a  n1-standard-2               10.240.0.20  35.222.255.58   RUNNING
+ccol2ebpf-worker-1    us-central1-a  n1-standard-2               10.240.0.21  35.202.145.246  RUNNING
+ccol2ebpf-worker-2    us-central1-a  n1-standard-2               10.240.0.22  35.224.107.66   RUNNING
+
+
+
+Waiting for SSH key to propagate.
+Warning: Permanently added 'compute.552914696822635795' (ECDSA) to the list of known hosts.
+Hello
+Warning: Permanently added 'compute.587031619214555756' (ECDSA) to the list of known hosts.
+Hello
+Warning: Permanently added 'compute.8732714001210063465' (ECDSA) to the list of known hosts.
+Hello
+Warning: Permanently added 'compute.8309883322846460519' (ECDSA) to the list of known hosts.
+Hello
+
+SSH
+gcloud compute ssh ubuntu@ccol2ebpf-controller
+gcloud compute ssh ubuntu@ccol2ebpf-worker-0
+gcloud compute ssh ubuntu@ccol2ebpf-worker-1
+gcloud compute ssh ubuntu@ccol2ebpf-worker-2
+
+
+kubeadm pre-reqs
+/etc/modules-load.d/k8s.conf
+
+for i in `gcloud compute instances list --filter="name~ccol2ebpf" | grep -v NAME | awk '{print $1}'`; do gcloud compute ssh --zone us-central1-a ubuntu@$i --command "echo \"br_netfilter\" | sudo tee /etc/modules-load.d/k8s.conf" ; done
+
+
+ip tables see bridged traffic
+/etc/sysctl.d/k8s.conf
+
+for i in `gcloud compute instances list --filter="name~ccol2ebpf" | grep -v NAME | awk '{print $1}'`; do gcloud compute ssh --zone us-central1-a ubuntu@$i --command "echo -e \"net.bridge.bridge-nf-call-ip6tables = 1\\nnet.bridge.bridge-nf-call-iptables = 1\" | sudo tee /etc/sysctl.d/k8s.conf" ; done
+
+
+reboot
+for i in `gcloud compute instances list --filter="name~ccol2ebpf" | grep -v NAME | awk '{print $1}'`; do gcloud compute ssh --zone us-central1-a ubuntu@$i --command "sudo reboot" ; done
+
+
+re-running
+for i in `gcloud compute instances list --filter="name~ccol2ebpf" | grep -v NAME | awk '{print $1}'`; do gcloud compute ssh --zone us-central1-a ubuntu@$i --command "uptime" ; done
+
+
+Install Docker
+for i in `gcloud compute instances list --filter="name~ccol2ebpf" | grep -v NAME | awk '{print $1}'`; do gcloud compute ssh --zone us-central1-a ubuntu@$i --command "sudo apt update && sudo apt install -y docker.io && sudo systemctl enable docker.service"; done
+
+
+cgroup
+feature of the Linux kernel that allows process and resource isolation
+
+
+for i in `gcloud compute instances list --filter="name~ccol2ebpf" | grep -v NAME | awk '{print $1}'`; do gcloud compute ssh --zone us-central1-a ubuntu@$i --command "echo -e '{\n  \"exec-opts\": [\"native.cgroupdriver=systemd\"],\n  \"log-driver\": \"json-file\",\n  \"log-opts\": {\n    \"max-size\": \"100m\"\n  },\n  \"storage-driver\": \"overlay2\"\n}' | sudo tee /etc/docker/daemon.json"; done
+
+
+restart Docker
+for i in `gcloud compute instances list --filter="name~ccol2ebpf" | grep -v NAME | awk '{print $1}'`; do gcloud compute ssh --zone us-central1-a ubuntu@$i --command "sudo systemctl daemon-reload && sudo systemctl restart docker"; done
+
+
+Kubernetes and kubeadm KEY
+for i in `gcloud compute instances list --filter="name~ccol2ebpf" | grep -v NAME | awk '{print $1}'`; do gcloud compute ssh --zone us-central1-a ubuntu@$i --command "sudo apt update && sudo apt install -y apt-transport-https ca-certificates curl"; done
+
+
+download Google package installation key
+for i in `gcloud compute instances list --filter="name~ccol2ebpf" | grep -v NAME | awk '{print $1}'`; do gcloud compute ssh --zone us-central1-a ubuntu@$i --command "sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg"; done
+
+
+configure each VM to use the key 
+/etc/apt/sources.list.d/kubernetes.list:
+
+
+Install kubelet		Kubernetes node agent
+Install kubeadm
+Install kubectl
+
+for i in `gcloud compute instances list --filter="name~ccol2ebpf" | grep -v NAME | awk '{print $1}'`; do gcloud compute ssh --zone us-central1-a ubuntu@$i --command "sudo apt-get update && sudo apt-get install -y kubelet=1.21.4-00 kubeadm=1.21.4-00 kubectl=1.21.4-00 && sudo apt-mark hold kubelet kubeadm kubectl"; done
+
+
+CONNECT
+gcloud compute ssh ubuntu@ccol2ebpf-controller --zone us-central1-a
+
+
+create file
+cat << EOF > ccol2ebpf-kubeadm-config.yaml
+kind: ClusterConfiguration
+apiVersion: kubeadm.k8s.io/v1beta2
+kubernetesVersion: v1.21.4
+networking:
+  podSubnet: "192.168.0.0/16"
+apiServer:
+  certSANs:
+    - 88.88.88.88
+---
+kind: KubeletConfiguration
+apiVersion: kubelet.config.k8s.io/v1beta1
+cgroupDriver: systemd
+EOF
+
+
+get public IP and replace YAML file
+MY_PUBLIC_IP=`curl -s https://checkip.amazonaws.com` && sed -i "s/88.88.88.88/${MY_PUBLIC_IP}/g" ccol2ebpf-kubeadm-config.yaml
+34.135.81.125
+
+
+build cluster controller node
+sudo kubeadm init --config ccol2ebpf-kubeadm-config.yaml
+
+
+export KUBECONFIG=/etc/kubernetes/admin.conf
+
+
+Copy the two lines beginning "kubeadm join"
+kubeadm join 10.240.0.11:6443 --token 7htdyq.54i4neodpl63r18c \
+	--discovery-token-ca-cert-hash sha256:889c8851fd130ceded5c069754dbecd86c30c81e2cba2df253d803e232c9318e 
+
+
+kubeconfig
+mkdir -p $HOME/.kube && sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config && sudo chown $(id -u):$(id -g) $HOME/.kube/config && cp $HOME/.kube/config $HOME/.kube/config.external_ip
+
+
+substitute public IP in 2x kubconfig files
+MY_PUBLIC_IP=`curl -s https://checkip.amazonaws.com` && sed -i "s/10.240.0.11/${MY_PUBLIC_IP}/g" $HOME/.kube/config.external_ip && diff .kube/config .kube/config.external_ip
+
+
+exit
+from ubuntu@ccol2ebpf-controlle
+
+
+Multipass ccol2ebpf
+mv ~/.kube ~/.kube.epochtime.$(date +%s).backup
+
+
+copy config $HOME/.kube/config
+mkdir /home/ubuntu/.kube && gcloud compute scp --zone us-central1-a ubuntu@ccol2ebpf-controller:/home/ubuntu/.kube/config.external_ip /home/ubuntu/.kube/config
+
+
+kubectl get nodes
+NAME                   STATUS     ROLES                  AGE    VERSION
+ccol2ebpf-controller   NotReady   control-plane,master   5m4s   v1.21.4
+
+
+join worker nodes
+
+use
+kubeadm join
+but sub tokens
+e.g.
+
+for i in `gcloud compute instances list --filter="name~ccol2ebpf-worker" | grep -v NAME | awk '{print $1}'`; do gcloud compute ssh --zone us-central1-a ubuntu@$i --command "sudo kubeadm join 10.240.0.11:6443 --token ---REDACTED--- --discovery-token-ca-cert-hash sha256:---REDACTED---" ; done
+
++
+
+kubeadm join 10.240.0.11:6443 --token 7htdyq.54i4neodpl63r18c --discovery-token-ca-cert-hash sha256:889c8851fd130ceded5c069754dbecd86c30c81e2cba2df253d803e232c9318e
+
+=
+
+
+for i in `gcloud compute instances list --filter="name~ccol2ebpf-worker" | grep -v NAME | awk '{print $1}'`; do gcloud compute ssh --zone us-central1-a ubuntu@$i --command
+
+ "sudo kubeadm join 10.240.0.11:6443 --token 7htdyq.54i4neodpl63r18c --discovery-token-ca-cert-hash sha256:889c8851fd130ceded5c069754dbecd86c30c81e2cba2df253d803e232c9318e" ; done
+
+
