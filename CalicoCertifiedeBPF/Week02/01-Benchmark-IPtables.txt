@@ -1,0 +1,72 @@
+ubuntu@ccol2ebpf:~$ k8s-bench-suite/knb -v -cn ccol2ebpf-worker-0 -sn ccol2ebpf-worker-1
+2021-11-20 15:05:56 [INFO] Client node will be 'ccol2ebpf-worker-0'
+2021-11-20 15:05:56 [INFO] Server node will be 'ccol2ebpf-worker-1'
+2021-11-20 15:05:56 [INFO] Deploying server monitor on node ccol2ebpf-worker-1
+2021-11-20 15:05:58 [INFO] Waiting for server monitor to be running
+2021-11-20 15:06:02 [INFO] Deploying client monitor on node ccol2ebpf-worker-0
+2021-11-20 15:06:03 [INFO] Waiting for client monitor to be running
+2021-11-20 15:06:06 [INFO] Deploying iperf server on node ccol2ebpf-worker-1
+2021-11-20 15:06:07 [INFO] Waiting for server to be running
+2021-11-20 15:06:11 [INFO] Detecting CPU
+2021-11-20 15:06:13 [INFO] Detecting Kernel
+2021-11-20 15:06:14 [INFO] Detecting Kubernetes version
+2021-11-20 15:06:15 [INFO] Detecting CNI MTU
+2021-11-20 15:06:17 [INFO] Starting pod knb-client-idle-20517 on node ccol2ebpf-worker-0
+2021-11-20 15:06:30 [INFO] Waiting for pod knb-client-idle-20517 to be completed
+2021-11-20 15:06:34 [INFO] Starting pod knb-client-tcp-p2p-20517 on node ccol2ebpf-worker-0
+2021-11-20 15:06:47 [INFO] Waiting for pod knb-client-tcp-p2p-20517 to be completed
+2021-11-20 15:06:53 [INFO] Starting pod knb-client-udp-p2p-20517 on node ccol2ebpf-worker-0
+2021-11-20 15:07:06 [INFO] Waiting for pod knb-client-udp-p2p-20517 to be completed
+2021-11-20 15:07:13 [INFO] Starting pod knb-client-tcp-p2s-20517 on node ccol2ebpf-worker-0
+2021-11-20 15:07:26 [INFO] Waiting for pod knb-client-tcp-p2s-20517 to be completed
+2021-11-20 15:07:32 [INFO] Starting pod knb-client-udp-p2s-20517 on node ccol2ebpf-worker-0
+2021-11-20 15:07:44 [INFO] Waiting for pod knb-client-udp-p2s-20517 to be completed
+=========================================================
+ Benchmark Results
+=========================================================
+ Name            : knb-20517
+ Date            : 2021-11-20 15:05:56 UTC
+ Generator       : knb
+ Version         : 1.5.0
+ Server          : ccol2ebpf-worker-1
+ Client          : ccol2ebpf-worker-0
+ UDP Socket size : auto
+=========================================================
+  Discovered CPU         : Intel(R) Xeon(R) CPU @ 2.30GHz
+  Discovered Kernel      : 5.11.0-1018-gcp
+  Discovered k8s version : v1.21.4
+  Discovered MTU         : 1410
+  Idle :
+    bandwidth = 0 Mbit/s
+    client cpu = total 8.11% (user 5.44%, nice 0.00%, system 2.44%, iowait 0.23%, steal 0.00%)
+    server cpu = total 4.26% (user 2.84%, nice 0.05%, system 1.37%, iowait 0.00%, steal 0.00%)
+    client ram = 639 MB
+    server ram = 628 MB
+  Pod to pod :
+    TCP :
+      bandwidth = 5692 Mbit/s
+      client cpu = total 42.02% (user 5.00%, nice 0.00%, system 36.87%, iowait 0.15%, steal 0.00%)
+      server cpu = total 59.10% (user 4.84%, nice 0.00%, system 54.17%, iowait 0.09%, steal 0.00%)
+      client ram = 636 MB
+      server ram = 630 MB
+    UDP :
+      bandwidth = 1259 Mbit/s
+      client cpu = total 55.44% (user 8.37%, nice 0.05%, system 46.92%, iowait 0.10%, steal 0.00%)
+      server cpu = total 66.70% (user 10.15%, nice 0.00%, system 56.55%, iowait 0.00%, steal 0.00%)
+      client ram = 636 MB
+      server ram = 630 MB
+  Pod to Service :
+    TCP :
+      bandwidth = 5610 Mbit/s
+      client cpu = total 43.65% (user 6.65%, nice 0.05%, system 36.85%, iowait 0.10%, steal 0.00%)
+      server cpu = total 63.52% (user 4.77%, nice 0.00%, system 58.70%, iowait 0.05%, steal 0.00%)
+      client ram = 643 MB
+      server ram = 632 MB
+    UDP :
+      bandwidth = 1242 Mbit/s
+      client cpu = total 54.44% (user 10.40%, nice 0.05%, system 43.81%, iowait 0.18%, steal 0.00%)
+      server cpu = total 69.50% (user 11.19%, nice 0.05%, system 58.26%, iowait 0.00%, steal 0.00%)
+      client ram = 637 MB
+      server ram = 627 MB
+=========================================================
+2021-11-20 15:07:50 [INFO] Cleaning kubernetes resources ...

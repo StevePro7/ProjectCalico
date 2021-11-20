@@ -26,3 +26,10 @@ https://github.com/iovisor/bcc
 ebpf_exporter
 https://github.com/cloudflare/ebpf_exporter
 https://blog.cloudflare.com/introducing-ebpf_exporter/
+
+
+Week 2	Deploy Calico
+#5	Installing Calico on the Cluster
+
+Operator Framework
+https://operatorframework.io

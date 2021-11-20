@@ -398,3 +398,75 @@ which explains status "NotReady"
 
 kubectl get pods -A
 coredns pods are Pending waiting for node with networking to deploy on to
+
+
+Week 2	Deploy Calico
+#5	Installing Calico on the Cluster
+
+Tigera operator
+kubectl create -f https://docs.projectcalico.org/manifests/tigera-operator.yaml
+
+Calico CRDs
+kubectl create -f https://docs.projectcalico.org/manifests/custom-resources.yaml
+
+now coredns pods are running
+i.e. CNI configured via Calico
+
+
+Week 2	Deploy Calico
+#6	Testing Performance with Calico’s Standard Iptables Data Plane
+
+cluster running standard Linux IP tables data plane
+
+
+k8s-bench-suite
+git clone https://github.com/InfraBuilder/k8s-bench-suite.git
+
+TEST
+k8s-bench-suite/knb -v -cn ccol2ebpf-worker-0 -sn ccol2ebpf-worker-1
+
+
+Week 2	Deploy Calico
+#7	Switching to eBPF
+
+kube api server
+kubectl get configmap -n kube-system kube-proxy -o yaml | grep server
+        server: https://10.240.0.11:6443
+
+
+create CRD
+
+cat << EOF > ccol2ebpf-k8s-endpoint.yaml
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: kubernetes-services-endpoint
+  namespace: tigera-operator
+data:
+  KUBERNETES_SERVICE_HOST: "10.240.0.11"
+  KUBERNETES_SERVICE_PORT: "6443"
+EOF
+
+kubectl apply -f ccol2ebpf-k8s-endpoint.yaml
+
+
+Wait 60s
+pickup change
+sleep 60 && kubectl delete pod -n tigera-operator -l k8s-app=tigera-operator
+
+disable kube-proxy
+kube proxy is the per-node network proxy that implements Kubernetes services
+
+
+kubectl get pods -n=kube-system
+
+
+kubectl patch ds -n kube-system kube-proxy -p '{"spec":{"template":{"spec":{"nodeSelector":{"non-calico": "true"}}}}}'
+
+kubectl get pods -n=calico-system
+
+switch to eBPF
+kubectl patch installation.operator.tigera.io default --type merge -p '{"spec":{"calicoNetwork":{"linuxDataplane":"BPF", "hostPorts":null}}}'
+
+kubectl get pods -n=calico-system
+At this point, your Kubernetes cluster should be healthy and running the Calico eBPF data plane.
