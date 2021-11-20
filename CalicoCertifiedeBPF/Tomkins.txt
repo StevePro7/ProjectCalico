@@ -18,8 +18,11 @@ Initialising and Authenticating to GCP
 
 could not create new cloud project 	ccol2ebpf
 
-so instead I created ccol2ebpf2
+so instead I created steveproebpf
 e.g.
-gcloud projects create ccol2ebpf2
-gcloud config set project ccol2ebpf2
+gcloud projects create steveproebpf
+gcloud config set project steveproebpf
 gcloud config list
+
+BUT on my personal account
+I had to setup billing

@@ -79,3 +79,63 @@ gcloud config list
 Weej 2	Deploy Calico w/ eBPF
 #3	Setting up some Basic Networking and Virtual Machines
 gcloud compute project-info add-metadata --metadata google-compute-default-region=us-central1,google-compute-default-zone=us-central1-a
+
+
+Login as steven_boland@hotmail.com
+Created: steveproebpf
+Created: SteveProBilling
+
+Enabling service [compute.googleapis.com] on project [730223911331]...
+HAD to link SteveProBilling
+
+Enabling service [compute.googleapis.com] on project [730223911331]...
+Operation "operations/acf.p2-730223911331-8cf85218-1301-4f68-92e6-da2afa013f60" finished successfully.
+Updated [https://www.googleapis.com/compute/v1/projects/steveproebpf].
+
+
+
+Created [https://www.googleapis.com/compute/v1/projects/steveproebpf/global/networks/ccol2ebpf-vpc].
+NAME           SUBNET_MODE  BGP_ROUTING_MODE  IPV4_RANGE  GATEWAY_IPV4
+ccol2ebpf-vpc  CUSTOM       REGIONAL
+
+
+gcloud compute networks subnets create ccol2ebpf-subnet \
+  --network ccol2ebpf-vpc \
+  --range 10.240.0.0/24
+
+region
+us-central1
+
+
+Created [https://www.googleapis.com/compute/v1/projects/steveproebpf/regions/us-central1/subnetworks/ccol2ebpf-subnet].
+NAME              REGION       NETWORK        RANGE          STACK_TYPE  IPV6_ACCESS_TYPE  IPV6_CIDR_RANGE  EXTERNAL_IPV6_CIDR_RANGE
+ccol2ebpf-subnet  us-central1  ccol2ebpf-vpc  10.240.0.0/24  IPV4_ONLY
+
+
+gcloud compute firewall-rules create ccol2ebpf-vpc-allow-internal \
+  --allow tcp,udp,icmp \
+  --network ccol2ebpf-vpc \
+  --source-ranges 10.240.0.0/24
+
+
+Creating firewall...\u2839Created [https://www.googleapis.com/compute/v1/projects/steveproebpf/global/firewalls/ccol2ebpf-vpc-allow-internal].
+Creating firewall...done.                                                                                
+NAME                          NETWORK        DIRECTION  PRIORITY  ALLOW         DENY  DISABLED
+ccol2ebpf-vpc-allow-internal  ccol2ebpf-vpc  INGRESS    1000      tcp,udp,icmp        False
+
+
+MY_PUBLIC_IP_AND_MASK=`curl -s https://checkip.amazonaws.com`/32
+87.198.108.60/32
+
+
+
+gcloud compute firewall-rules create ccol2ebpf-vpc-allow-external \
+  --allow tcp:22,tcp:6443,icmp \
+  --network ccol2ebpf-vpc \
+  --source-ranges 87.198.108.60/32
+
+
+Creating firewall...\u2839Created [https://www.googleapis.com/compute/v1/projects/steveproebpf/global/firewalls/ccol2ebpf-vpc-allow-external].
+Creating firewall...done.                                                                                
+NAME                          NETWORK        DIRECTION  PRIORITY  ALLOW                 DENY  DISABLED
+ccol2ebpf-vpc-allow-external  ccol2ebpf-vpc  INGRESS    1000      tcp:22,tcp:6443,icmp        False
