@@ -502,3 +502,17 @@ Launch browser
 http://10.80.26.77:8381
 
 exit
+
+
+Tear Down Your Cluster
+Delete the VMs:
+Delete the external firewall rules:
+Delete the internal firewall rules:
+Delete the subnet:
+Delete the network:
+
+gcloud compute instances delete --zone us-central1-a ccol2ebpf-controller ccol2ebpf-worker-0 ccol2ebpf-worker-1 ccol2ebpf-worker-2
+gcloud compute firewall-rules delete ccol2ebpf-vpc-allow-external
+gcloud compute firewall-rules delete ccol2ebpf-vpc-allow-internal
+gcloud compute networks subnets delete ccol2ebpf-subnet
+gcloud compute networks delete ccol2ebpf-vpc
