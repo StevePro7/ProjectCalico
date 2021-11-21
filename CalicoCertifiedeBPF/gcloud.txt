@@ -3,6 +3,8 @@ GCP
 
 Install multipass first
 
+mutlipass shell ccol2ebpf
+
 
 GOOGLE SDK
 curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-356.0.0-linux-x86_64.tar.gz

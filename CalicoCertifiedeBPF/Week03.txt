@@ -1,0 +1,57 @@
+Week 03
+21/11/2021
+
+Deploying Calico with eBPF on OpenShift
+
+#4
+Create a GCP Service Account
+
+change all instances of this
+ccol2ebpf-oshift-build-sa@ccol2ebpf.iam.gserviceaccount.com
+
+to this
+ccol2ebpf-oshift-build-sa@steveproebpf.iam.gserviceaccount.com
+
+
+Now create a file called ccol2ebpf-oshift-build-sakeys in /home/ubuntu on ccol2ebpf. This file contains the security credentials for this user. You will use it later:
+
+gcloud iam service-accounts keys create ccol2ebpf-oshift-build-sakeys --iam-account=ccol2ebpf-oshift-build-sa@steveproebpf.iam.gserviceaccount.com
+
+
+
+ccol2ebpf-oshift-build-sakeys
+
+service account 
+ccol2ebpf-oshift-build-sa
+
+
+ccol2ebpf
+steveproebpf
+
+gcloud projects add-iam-policy-binding steveproebpf --member serviceAccount:ccol2ebpf-oshift-build-sa@steveproebpf.iam.gserviceaccount.com --role roles/compute.admin
+
+gcloud projects add-iam-policy-binding steveproebpf --member serviceAccount:ccol2ebpf-oshift-build-sa@steveproebpf.iam.gserviceaccount.com --role roles/dns.admin
+
+
+freenom.com
+steveproxna.vf
+
+
+ccol2ebpf-oshift-on-g-8dj5s-network
+
+
+Week 3
+Deploying Calico with eBPF on OpenShift
+
+
+10. Create the Cluster and Test Source IP Preservation
+:ERROR                                              
+ERROR Error: Error waiting for instance to create: Quota 'SSD_TOTAL_GB' exceeded.  Limit: 500.0 in region us-central1.
+
+
+Maybe because I couldn't get the DNS sorted!
+
+
+Deploying a Rancher RKE Cluster with eBPF and a Rancher Server
+#8
+Build a Rancher Server in GCP (which provides the Rancher management GUI)
