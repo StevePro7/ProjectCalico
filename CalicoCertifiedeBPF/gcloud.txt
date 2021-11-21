@@ -1,0 +1,30 @@
+GCP
+21/11/2021
+
+Install multipass first
+
+
+GOOGLE SDK
+curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-356.0.0-linux-x86_64.tar.gz
+gunzip google-cloud-sdk-356.0.0-linux-x86_64.tar.gz
+tar xvf google-cloud-sdk-356.0.0-linux-x86_64.tar
+./google-cloud-sdk/install.sh
+
+exit
+multipass shell ccol2ebpf
+
+
+Week 2	Initialising and Authenticating to GCP
+./google-cloud-sdk/bin/gcloud init
+
+Launch browser
+Login into Google
+steven_boland@hotmail.com
+
+Copy + paste URL into browser
+Copy + paste verification code
+
+
+//gcloud auth login
+//gcloud config set project steveproebpf
+gcloud config list
