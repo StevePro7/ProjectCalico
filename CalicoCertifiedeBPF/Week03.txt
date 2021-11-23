@@ -55,3 +55,7 @@ Maybe because I couldn't get the DNS sorted!
 Deploying a Rancher RKE Cluster with eBPF and a Rancher Server
 #8
 Build a Rancher Server in GCP (which provides the Rancher management GUI)
+
+ubuntu@ccol2ebpf:~$   gcloud compute ssh --zone us-central1-a ubuntu@ccol2ebpf-rke-rancherserver --command "sudo apt update && sudo apt install -y docker.io && sudo systemctl enable docker.service"
+ssh: connect to host 35.224.239.210 port 22: Connection refused
+ERROR: (gcloud.compute.ssh) [/usr/bin/ssh] exited with return code [255].

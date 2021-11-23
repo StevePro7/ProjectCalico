@@ -1,0 +1,29 @@
+Week 04
+21/11/2021
+
+Calico eBPF and WireGuard
+#6	Implementing WireGuard on Your RKE Cluster
+
+kubectl get nodes
+but output is of
+kubectl get nodes -o wide
+
+
+
+Monitoring + Troubleshooting Calico eBPF Data Plane
+#3	Monitoring + Visualisation
+ubuntu@ccol2ebpf:~/ccol2ebpf-rke-build$ kubectl apply -f example-network-set.yaml 
+error: error validating "example-network-set.yaml": error validating data: ValidationError(NetworkSet.metadata.labels): invalid type for io.k8s.apimachinery.pkg.apis.meta.v1.ObjectMeta.labels: got "string", expected "map"; if you choose to ignore these errors, turn validation off with --validate=false
+
+
+
+
+IMPORTANT
+Is this file 
+example-network-policy.yaml.temp
+
+meant to be
+example-network-policy.yaml
+
+as I get the error
+Failed to execute command: open example-network-policy.yaml: no such file or directory
