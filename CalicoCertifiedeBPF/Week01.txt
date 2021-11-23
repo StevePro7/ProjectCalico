@@ -1,0 +1,33 @@
+Setup
+20/11/2021
+
+
+Uninstall Multipass	if installed
+Ubuntu Software Center	install Multipass
+
+multipass list
+multipass version
+
+
+Week 1
+Week 1	Lab Setup
+#3.	Building and Validating the Lab Environment
+
+multipass launch 21.04 --disk 10G -n ccol2ebpf
+multipass shell ccol2ebpf
+
+
+git clone https://github.com/libbpf/libbpf.git
+git clone https://github.com/libbpf/libbpf-bootstrap.git
+
+LIBBPF
+cd libbpf/src
+make
+
+
+LIBBPF	BOOTSTRAP
+cd ../../libbpf-bootstrap/
+git submodule update --init --recursive
+
+
+
