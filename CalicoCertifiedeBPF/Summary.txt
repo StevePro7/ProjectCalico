@@ -1,0 +1,35 @@
+23/11/2021
+
+Hi Chris - the course looks great and very thorough - I did notice a couple of very minor things e.g. 
+
+Week #1 : is there an inconsistency with "BTF Type Format (BTF)" in Understanding the Tools on tab #3 but then referenced as "BPF Type Format, or BTF" on tab #5...?
+
+Week #2 : very minor : I think the text says kubectl get pods but the command was meant to be kubectl get pods -o wide...?
+
+
+Finally, here are maybe 3x suggestions / findings I also noticed:
+Thanks,
+Steven.
+
+
+#1.
+Week 1	Writing an eBPF Program
+Tab# 7 	Compiling and Running the Renamed Programs
+
+Maybe mention if you do not run programs as root i.e. using sudo then you may get the error "Failed to increase RLIMIT_MEMLOCK limit!"...?
+
+
+#2.
+Week 2	Deploy Calico with eBPF on Upstream Kubernetes
+Tab# 8	Testing Performance with Calico’s eBPF Data Plane
+
+Does this page need to be updated?
+TBC - IF YOU'RE TESTING THE COURSE, PLEASE GET IN TOUCH WITH CHRIS TOMKINS ABOUT THIS...
+
+
+#3.
+Week 3	Deploying Calico with eBPF on AKS
+Tab# 1	Deploying an Azure AKS Cluster with Azure CNI and Calico for policy with eBPF
+
+Does this page need to be updated?
+https://docs.google.com/presentation/d/18cIJdpV3m8e6KvPBYyYBfvl7O_P149Ic16cWYISjrUg
