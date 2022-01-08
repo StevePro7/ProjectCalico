@@ -1,0 +1,89 @@
+Calico Routing Modes
+08/01/2022
+
+https://www.youtube.com/watch?v=MpbIZ1SmEkU
+
+https://octetz.com/docs/2020/2020-10-01-calico-routing-modes
+
+
+
+Terraform
+terraform init
+terraform validate
+terraform plan -input=false -out="demo.tfplan"
+terraform apply -input=false -auto-approve demo.tfplan
+
+Error: error configuring Terraform AWS Provider: no valid credential sources for Terraform AWS Provider found.
+
+https://wesley.sh/solving-terraform-no-valid-credential-sources-found-for-aws-provider
+
+
+provider "aws" {
+   region = "eu-west-1"
+   access_key = "DONT_PUT_KEYS_IN_YOUR.TF_FILES"
+   secret_key = "NO_REALLY_DONT"
+ }
+
+get info from ~/.aws
+
+
+Error: UnauthorizedOperation: You are not authorized to perform this operation.
+with data.aws_ami.ubuntu
+
+https://codesteps.com/2018/08/27/aws-how-to-fix-you-are-not-authorized-to-perform-this-operation-error/
+
+
+I setup the cluster as per Calico certified operator course
+
+
+stevepro@Alienware:~$ multipass list
+Name                    State             IPv4             Image
+control                 Running           10.138.168.25    Ubuntu 20.04 LTS
+host1                   Running           10.138.168.169   Ubuntu 20.04 LTS
+node1                   Running           10.138.168.70    Ubuntu 20.04 LTS
+node2                   Running           10.138.168.244   Ubuntu 20.04 LTS
+
+
+control			198.19.0.1/20
+node1			198.19.0.2/20
+node2			198.19.0.3/20
+host1			198.19.15.254/20	
+
+
+
+control
+sudo calicoctl node status
+IPv4 BGP status
++--------------+-------------------+-------+----------+-------------+
+| PEER ADDRESS |     PEER TYPE     | STATE |  SINCE   |    INFO     |
++--------------+-------------------+-------+----------+-------------+
+| 198.19.0.2   | node-to-node mesh | up    | 16:38:32 | Established |
+| 198.19.0.3   | node-to-node mesh | up    | 16:38:33 | Established |
++--------------+-------------------+-------+----------+-------------+
+
+
+node1
+sudo calicoctl node status
+IPv4 BGP status
++--------------+-------------------+-------+----------+-------------+
+| PEER ADDRESS |     PEER TYPE     | STATE |  SINCE   |    INFO     |
++--------------+-------------------+-------+----------+-------------+
+| 198.19.0.3   | node-to-node mesh | up    | 16:38:29 | Established |
+| 198.19.0.1   | node-to-node mesh | up    | 16:38:32 | Established |
++--------------+-------------------+-------+----------+-------------+
+
+
+node2
+sudo calicoctl node status
+IPv4 BGP status
++--------------+-------------------+-------+----------+-------------+
+| PEER ADDRESS |     PEER TYPE     | STATE |  SINCE   |    INFO     |
++--------------+-------------------+-------+----------+-------------+
+| 198.19.0.2   | node-to-node mesh | up    | 16:38:30 | Established |
+| 198.19.0.1   | node-to-node mesh | up    | 16:38:33 | Established |
++--------------+-------------------+-------+----------+-------------+
+
+
+host1
+sudo calicoctl node status
+Calico process is not running
