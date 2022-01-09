@@ -33,6 +33,104 @@ with data.aws_ami.ubuntu
 https://codesteps.com/2018/08/27/aws-how-to-fix-you-are-not-authorized-to-perform-this-operation-error/
 
 
+YOUTUBE cluster
+k get nodes
+master		10.30.0.136
+worker-1	10.30.0.206
+worker-2	10.30.0.56
+worker-3	10.30.1.66
+
+k get po
+pod-1		192.168.226.69
+pod-2		192.168.133.194
+pod-3		192.168.97.193
+
+Route sharing
+BGP		Border Gateway Protocol to share routes
+
+k get po -n kube-system
+calico-node
+
+k get po calico-node-7cp4m -n kube-system -o yaml pod.yaml
+gedit pod.yaml
+
+bird		Calico uses BIRD to facilitate BGP route sharing
+felix		programs the host's route table
+
+calicoctl
+runs in 2x modes
+e.g.
+K8s API datastore mode
+
+calicoctl node status
+what other nodes this node is peering with 
+
+
+routing table
+route -n
+
+IP in IP
+tun	tunnel interfaces
+link the nodes together from routing pov
+
+cali	interfaces
+Pod IP that are on this host
+enforce policy via IP chains rules
+
+
+Routing Modes
+
+IP in IP		encapsulation
+Direct			unencapsulated routing mode
+VXLAN			encapsulation; no BGP
+
+
+Worker node routing table
+route -n
+
+
+pod-1 -> pod-2
+intra subnet
+
+master node
+k exec -it pod-1 /bin/bash
+curl pod-2
+curl 192.168.133.194
+
+
+worker node
+k exec -it pod-2 /bin/bash
+nc -l -p 80				netcat
+
+
+Wireshark
+TCP input / output
+
+IP in IP
+put packet in another packet
+outer header & inner header
+outer header	has host / node info
+inner header	has pod IP address
+
+
+Direct
+unencapsulated traffic
+
+Calico => IPPool
+calico get ippool default-ipv4-ippool -o yaml > cip.yaml
+
+ipipMode: Never
+calico apply -f cip.yaml
+
+
+watch route -n
+
+no routing via "tun" interface instead "ens" main eth0 interface on the system
+
+direct routing
+source + dest checks 
+
+
 I setup the cluster as per Calico certified operator course
 
 
@@ -87,3 +185,6 @@ IPv4 BGP status
 host1
 sudo calicoctl node status
 Calico process is not running
+
+
+
