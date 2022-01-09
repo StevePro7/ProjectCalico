@@ -131,6 +131,51 @@ direct routing
 source + dest checks 
 
 
+CrossSubnet
+direct	unencap when on same subnet but cross subnet when applicable
+
+ipipMode: CrossSubnet
+
+route -n
+tun interface for worker-3 only whereas the others are ens for intra subnet
+
+
+VXLAN
+tunnelling protocol
+encapsulates L2 ethernet frames into UDP packets
+create virtual L2 networks
+
+change default calico.yaml
+https://docs.projectcalico.org/v3.11/manifests/calico.yaml
+
+1.	calico_backend: "vxlan"
+2.	CALICO_IPV4POOL_VXLAN
+3.	#    - -bird-ready
+
+kubectl apply -f calico.yaml 
+
+
+worker-1
+route -n
+vxlan.calico		vxlan interfaces
+
+worker node
+k exec -it pod-1 /bin/bash
+curl pod-3
+
+
+master node
+k exec -it pod-3 /bin/bash
+nc -l -p 80
+
+
+VXLAN
+encapsulate L2 frames into UDP packets
+
+extra virtual L2 network
+extra MAC address that is from the vxlan.calico interface
+
+
 I setup the cluster as per Calico certified operator course
 
 
