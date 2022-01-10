@@ -1,6 +1,7 @@
 Lab Setup
 10/01/2022
 
+Lab setup
 https://courses.academy.tigera.io/courses/course-v1:tigera+CCO-L1+CCO-L1-2020/courseware/34335c1507344450bbda775dd4460119/bf1560778a764aeaada7bb423860bcce/
 
 
@@ -15,5 +16,44 @@ multipass start --all
 multipass list
 
 multipass shell host1
+
+kubectl get nodes -A
+
+
+control		198.19.0.1/20
+node1		198.19.0.2/20
+node2		198.19.0.3/20
+host1		198.19.15.254/20
+
+
+Installing Calico		CNI plugin
+
+multipass shell host1
+
+kubectl create -f https://docs.projectcalico.org/archive/v3.19/manifests/tigera-operator.yaml
+
+kubectl get pods -n tigera-operator
+
+
+
+cat <<EOF | kubectl apply -f -
+apiVersion: operator.tigera.io/v1
+kind: Installation
+metadata:
+  name: default
+spec:
+  calicoNetwork:
+    containerIPForwarding: Enabled
+    ipPools:
+    - cidr: 198.19.16.0/21
+      natOutgoing: Enabled
+      encapsulation: None
+EOF
+
+kubectl get tigerastatus/calico
+
+kubectl get pods -A
+
+kubectl get pods -n calico-system
 
 kubectl get nodes -A
