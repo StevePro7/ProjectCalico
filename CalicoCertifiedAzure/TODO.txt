@@ -1,0 +1,10 @@
+TODO
+
+01.
+get the info on how to install
+clusterctl
+
+
+
+02.
+get the images on issues

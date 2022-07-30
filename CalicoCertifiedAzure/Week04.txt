@@ -1,2 +1,290 @@
 Week04
-xx/xx/2022
+30/07/2022
+
+
+Introduction
+install the following
+
+Azure-CLI
+kubectl
+clusterctl
+Kind
+Docker
+
+
+Install Azure CLI
+az account list
+az login
+
+az group create --name ccol2azure-week4-lab --location canadacentral
+
+
+export AZURE_SUBSCRIPTION_ID=`az account show --query id --output tsv`
+
+
+kind create cluster
+
+
+
+Azure Service Principals
+
+export AZURE_CLIENT_SECRET=`az ad sp create-for-rbac --role Contributor -n "calico-azure-cert-sp` --scopes
+/subscriptions/$AZURE_SUBSCRIPTION_ID/resourceGroups/ccol2azure-week4-lab
+-o tsv --query "password"
+
+
+C API
+Cluster API
+expects to find service principal token as Kubernetes secret
+
+export AZURE_CLUSTER_IDENTITY_SECRET_NAME="cluster-identity-secret"
+
+
+kubectl create secret generic "${AZURE_CLUSTER_IDENTITY_SECRET_NAME}" --from-literal=clientSecret="${AZURE_CLUSTER_IDENTITY_SECRET_NAME}"
+
+
+Cloud Provider Integration
+clusterctl init --infrastructure azure
+
+
+Azure Cluster Identity
+A CRD representing service principal secret
+
+export CLUSTER_IDENTITY_NAME="cluster-identity"
+export AZURE_CLUSTER_IDENTITY_SECRET_NAMESPACE="default"
+
+export AZURE_TENANT_ID=`az ad sp list --display-name calico-azure-cert-sp -o tsv --query "[].appOwnerOrganziationId"`
+
+export AZURE_CLIENT_ID=`az ad sp list --display-name calico-azure-cert-sp -o tsv --query "[].appId"`
+
+
+
+General Cluster Configurations
+export AZURE_LOCATION="canadacentral"
+export AZURE_CONTROL_PLANE_MACHINE_TYPE="Standard_B2s"
+export AZURE_NODE_MACHINE_TYPE="Standard_B2s"
+export AZURE_RESOURCE_GROUP="ccol2azure-week4-lab"
+
+
+Cluster Configuration
+clusterctl generate cluster calico-w4 --kubernetes-version v1.22.8 --control-plane-machine-count=1 --worker-machine-count=1 > calico-w4.yaml
+
+
+Cluster Deployment
+kubectl apply -f  calico-w4.yaml
+
+
+Deployment Status
+kubectl get cluster
+
+clusterctl describe cluster calico-w4
+
+
+NB:
+Kubeadmcontrolplane CRD inside management cluster represents control plane nodes
+
+
+watch kubectl get kubeadmcontrolplane
+
+
+Exporting the Kubeconfig File
+kubeconfig is YAML file that stores the cluster CA certificate and admin authentication details
+
+clusterctl get kubeconfig calico-w4 > calicow4.kubeconfig
+
+
+How To Use Multiple Kubeconfig Files 
+
+kubectl --kubeconfig=calico-w4.kubeconfig get nodes
+
+STATUS
+NotReady
+
+verify
+kubectl --kubeconfig=calico-w4.kubeconfig get node -o yaml | egrep -i cni
+
+       message:Network plugin returns error: cni plugin not initialized'
+
+
+No CNI installed
+Install Calico
+
+
+Calico Installation
+recommended way via tigera operator
+based on operator SDK the operator is an application dedicated to ensuring Calico installation smooth
+
+kubectl --kubeconfig=calico-w4.kubeconfig apply -f https://docs.projectcalico.org/archive/v3.21/manifests/tigera-operator.yaml
+
+
+Configuring Calico Features
+configure Calico to run encapsulation and pass cluster traffic inside Azure networking infrastructure
+
+NB:
+Azure blocks IP-IP traffic
+
+
+apiVersion: operator.tigera.io/v1
+kind: Installation
+metadata:
+ name: default
+spec:
+ calicoNetwork:
+   bgp: Disabled
+   nodeAddressAutodetectionV4:
+     canReach: 1.1.1.1
+   ipPools:
+   - blockSize: 26
+     cidr: 192.168.0.0/16
+     encapsulation: VXLAN
+     natOutgoing: Enabled
+     nodeSelector: all()
+
+
+
+apiVersion: operator.tigera.io/v1
+kind: APIServer
+metadata:
+ name: default
+spec: {}
+
+
+verfify control plane status
+kubectl --kubeconfig=calico-w4.kubeconfig get nodes
+
+
+Changing the Default Config File
+export KUBECONFIG=$PWD/calico-w4.kubeconfig
+
+
+Verifying Calico's Version
+kubectl exec deployments/tigera-operator -n tigera-operator -- operator -version
+
+Operator: v1.23.x
+Calico: v3.21.x
+Enterprise: v3.11.0
+
+
+kubectl apply -f https://projectcalico.docs.tigera.io/archive/v3.22/manifests/tigera-operator.yaml
+
+
+watch kubectl get tigerastatus
+
+
+kubectl exec deployments/tigera-operator -n tigera-operator  -- operator --version
+
+
+Online Boutique Diagram
+Removing the Master Taint
+kubectl taint nodes --all node-role.kubernetes.io/master-
+
+
+Deploying Online Boutique
+kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/release/v0.3.6/release/kubernetes-manifests.yaml
+
+
+Attempting to Deploy Istio Manifests
+kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/release/v0.3.6/release/istio-manifests.yaml
+
+
+Introduction to Calico’s Istio Integration
+enforce application-layer L7 network policy w/in Istio service mesh
+
+
+Configuring the FlexVolume Driver for Dikastes
+
+Dikastes 
+enforces network policy for the Istio service mesh
+runs as a sidecar proxy to Istio proxy [Envoy]
+
+Calico enforces network policy for workloads at Linux kernel (using optables L3-L4) and L3-L7
+
+
+Dikastes container talks to Felix using FlexVolume driver to enable secure connectivity btwn components
+
+patch Felix and Dikastes configuration to synchronize policy
+kubectl patch FelixConfiguration default --type=merge --patch '{"spec": {"policySyncPathPrefix": "/var/run/nodeagent"}}'
+
+
+Deploying Istio
+curl -L https://git.io/getLatestIstio | ISTIO_VERSION=1.10.2 sh -
+
+cd istio-1.10.2
+
+./bin/istioctl install
+
+
+Deploying Istio Manifests
+kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/release/v0.3.6/release/istio-manifests.yaml
+
+
+Use command to add struct rule to add mutual authentication btwn workloads and sidecar
+
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
+metadata:
+  name: default-strict-mode
+  namespace: istio-system
+spec:
+  mtls:
+    mode: STRICT
+
+
+Enable Istio and Calico communication
+curl https://projectcalico.docs.tigera.io/archive/v3.22/manifests/alp/istio-inject-configmap-1.10.yaml -o istio-inject-configmap.yaml
+
+
+kubectl patch configMap -n istio-system istio-sidecar-injection --patch "$(cat istio-inject-configmap.yaml)"
+
+
+Apply manifest to configure Istio to query Calico for application layer policy authorization decisions
+
+kubectl apply -f https://projectcalico.docs.tigera.io/archive/v3.22/manifests/alp/istio-app-layer-policy-envoy-v3.yaml
+
+
+Testing the Istio Ingress
+kubectl get service -n=istio-system istio-ingressgateway
+
+open web browser
+
+
+
+Blocking the Shopping Cart with Application Layer Policy
+kubectl get globalnetworkpolicy -o yaml
+
+
+kubectl apply -f https://raw.githubusercontent.com/tigera/ccol2azure/main/week4/01_frontend-allow.yaml
+kubectl apply -f https://raw.githubusercontent.com/tigera/ccol2azure/main/week4/02_frontend-deny.yaml
+
+
+kubectl get pods
+
+kubectl label namespace default istio-injection=enabled
+
+kubectl rollout restart deployment/frontend
+
+
+Access Denied!
+
+
+
+Sidecar Injection at a Pod Level
+kubectl rollout restart deployment/cartservice
+
+kubectl label namespace default istio-injection-
+
+
+command to enable Sidecar injection for the frontend pod
+kubectl patch deployment frountend --patch '{"spec": {"template": {"metadata": {"labels": {"sidecar.istio.io/inject": "true"}}}}}'
+
+
+kubectl rollout restart deployment/cartservice
+kubectl rollout restart deployment/frontend
+
+
+Lab cleanup
+
+az group delete --resource-group ccol2azure-week4-lab -y
+kind delete cluster
+
+az ad sp delete --id=`az ad sp list --display-name calico-azure-cert-sp -o tsv --query "[].appId"`

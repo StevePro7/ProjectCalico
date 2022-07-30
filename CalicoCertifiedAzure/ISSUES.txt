@@ -46,6 +46,8 @@ spec:
 
 
 04.
+Week03
+
 typo here
 https://courses.academy.tigera.io/courses/course-v1:tigera+CCO-L2-AZURE+CCO-L2-AZURE-2022/courseware/1e69a464057d4d02a60faa834ec38712/112eb46286104ed2b0e49796c5b10e6d/?child=first
 
@@ -53,3 +55,25 @@ e.g.
 nexhop:routes
 
 az network route-table show -g <NAME-OF-YOUR-ROUTE-TABLE-RESOURCE-GROUP> --name <NAME-OF-YOUR-AKS-ROUTETABLE> --query "{addressPrefix:routes[].addressPrefix,nexhop:routes[].nextHopIpAddress}"
+
+
+
+05.
+Week04
+
+https://courses.academy.tigera.io/courses/course-v1:tigera+CCO-L2-AZURE+CCO-L2-AZURE-2022/courseware/c55ecb686db74dbdb36705df436e4ec6/a6f3d10e61044d66b2241899e0cc70d2/?child=first
+
+
+Use the following command to verify the control plane status.
+kubectl --kubeconfig=calico-w4.kubeconfig get nodes
+
+NO OUTPUT
+
+
+
+06.
+Week04
+https://courses.academy.tigera.io/courses/course-v1:tigera+CCO-L2-AZURE+CCO-L2-AZURE-2022/courseware/c55ecb686db74dbdb36705df436e4ec6/b1da4a0dc4724903b55b9a9901fb7e0c/?child=first
+
+Congratulations, now you are running the latest version of Calico!
+NO OUTPUT

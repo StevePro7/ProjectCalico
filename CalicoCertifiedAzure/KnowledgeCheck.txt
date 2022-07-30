@@ -108,3 +108,28 @@ VXLAN
 
 
 Week04
+What makes Istio a useful addition to Calico?
+Runs on a cluster as a sidecar proxy to Istio Envoy
+Enforces network policy for Istio service mesh
+
+
+How can enforcement of application layer poilcy on a namespace be controlled?
+It enables request filtering baesd on the HTTP URL
+
+
+What is the most important requirement to deploy a self-managed cluster with Cluster API
+Management cluster
+
+
+Service principal token must be saved in what format to be accessible for CAPZ?
+Kubernetes secret
+
+
+What if Felix?
+The logic behind Calico
+
+
+Which label can limit Istio sidecar injection to pod level
+sidecar.istio.io/inject
+
+
