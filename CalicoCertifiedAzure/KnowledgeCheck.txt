@@ -1,0 +1,41 @@
+Knowledge Check
+30/07/2022
+
+
+
+Week01
+Which of these options can be used to enforce policy resources in an AKS cluster?
+Calico CNI
+Azure-CNI
+
+
+Which CNI is the default option for deploying an AKS cluster?
+Kubenet
+
+
+Which security meausres are not recommended to establish security for a Kubernetes cluster?
+
+Network Security Group
+Network Security Rule
+
+
+In an AKS cluster that uses Kubenet-CNI which one of these options can preserve the client source IP?
+
+Enabling Calico eBPF dataplane
+
+
+An overlay tunnel such as VXLAN is used for what purpose?
+Routing
+
+
+According to the following details, which CNIs can be used in this AKS cluster?
+VNET address range :	10.0.0.0/16
+Subnet pool :		10.0.0.0/24
+Cluster cidr :		192.168.0.0/24
+
+Kubenet
+Calico
+
+
+
+Week02
