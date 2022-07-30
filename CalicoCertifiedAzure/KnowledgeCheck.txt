@@ -79,3 +79,32 @@ None?
 
 
 Week03
+Which tenchology is supported by Calico to encrypt network traffic?
+Wireguard
+
+
+What does Calico eBPF dataplane replace
+kube-proxy
+
+
+Which component implements a caching layer to minimize the number of requests to the Kubernetes databse by acting as an intermediary for Calico?
+Typha
+
+
+Which statements are correct?
+Calico eBPF provides SourceIP preservation by replacing the Kube-proxy pods
+
+By default WireGuard implements Node to Node encryption
+
+
+Which one of these CNIs can be used to enforce policy for Linux and Windows workloads?
+Calico CNI
+
+
+
+Which one of these encapulations types can be used in Azure?
+VXLAN
+
+
+
+Week04

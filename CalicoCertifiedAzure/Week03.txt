@@ -407,3 +407,21 @@ kubectl patch felixconfiguration default --type=merge --patch='{"spec": {"bpfEna
 
 spin up kube-proxy pods
 kubectl patch ds -n kube-system kube-proxy --type merge -p '{"spec":{"template":{"spec":{"nodeSelector":{"non-calico": null}}}}}'
+
+
+Removing the AKS Cluster
+az aks delete --name CalicoAKSCluster --resource-group ccol2azure-week3-lab2 -y
+
+az group delete --resource-group ccol2azure-week3-lab2 -y
+
+
+kubectl config delete-cluster CalicoAKSCluster
+kubectl config delete-context CalicoAKSCluster-admin
+kubectl config delete-user clusterAdmin_ccol2azure_week3_lab2_CalicoAKSCluster
+
+
+
+Deleting the Cloud Shell Instance
+df -h | egrep drive
+
+clouddrive unmount
