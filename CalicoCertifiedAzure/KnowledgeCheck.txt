@@ -39,3 +39,43 @@ Calico
 
 
 Week02
+In an AKS cluster with the Kubenet CNI, what is used to establish communication between the cluster and Azure resources?
+Routing
+
+Following policy applies to?
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+
+Namespace
+
+
+Which of these options allows Kubernetes to enforce the following policy?
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+
+Calico CNI
+Azure CNI
+
+
+Which one of these opti0ons extends the kubectl to change resources that are under the "projectcalico.org/ve" API group?
+
+Calico API Server
+
+
+Is it possible to use Calico as a policy-only CNI while using another solution for networking?
+Yes
+
+
+Which one of these commands can only delete an AKS cluster?
+az aks delete -g myakscluster -n myakscluster
+
+
+
+Select all network polciy options available in the Azure web portal at the time of AKS cluster creation?
+Calico
+Azure-CNI
+None?
+
+
+
+Week03

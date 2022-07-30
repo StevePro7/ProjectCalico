@@ -1,2 +1,263 @@
 Week03
-xx/xx/2022
+30/07/2022
+
+
+AKS Deployment Azure-CNI with Calico CNI
+
+az group create --name ccol2azure-week3-lab --location canadacentral
+
+az aks create --resource-group ccol2azure-week3-lab --name CalicoAKSCluster --node-count 1 --node-vm-size Standard_B2s --network-plugin azure --network-policy calico --generate-ssh-keys
+
+az aks get-credentials --resource-group ccol2azure-week3-lab --name CalicoAKSCluster --admin
+
+kubectl get nodes
+
+
+Azure-CNI IPManagement
+
+Get available IP range inside your vnet
+az network vnet list -o table | egrep ccol2azure-week3-lab
+
+
+Get the IP range used in AKS
+kubectl cluster-info dump | egrep ' "\-\-cluster-cidr'
+
+
+Considerations
+you need FIVE SPARE IPs
+2x for DNS
+1x for Gateway
+1x for Network
+1x for Broadcast
+
+
+Scaling The Worker Node Pool
+az aks scale --node-count 2 --resource-group ccol2azure-week3-lab --name CalicoAKSCluster
+
+
+Calico Dynamic Scaling
+kubectl get deployments -n calico-system calico-typha
+
+
+Installing Calico API Server
+kubectl get deployments -n calico-apiserver
+apiserver.operator.tigera.io/default created
+
+
+kubectl get tigerastatus
+
+
+Preparing the Lab
+kubectl get nodes
+
+
+Labeling Nodes
+FIRST_NODE=`kubectl get node | awk 'FNR==2{print $1}'`
+SECOND_NODE=`kubectl get node | awk 'FNR==3{print $1}'`
+
+kubectl label node $FIRST_NODE node=first
+kubectl label node $SECOND_NODE node=second
+
+
+Deploying the Yaobank 
+kubectl apply -f https://raw.githubusercontent.com/tigera/ccol2azure/main/week3/yaobank.yaml
+
+kubectl get deployments -n yaobank
+
+
+Deploying a Load Balancer
+kubectl get svc -n yaobank yaobank-customer
+
+
+
+Intercepting Traffic Inside the Cluster
+kubectl get pods -n yaobank -o wide
+
+
+kubectl create ns calico-debugger
+
+kubectl debug -n calico-debugger node/$FIRST_NODE -it -- image=mcr.microsoft.com/dotnet/runtime-deps:6.0
+
+chroot /host
+
+verify wireguard kernel modules are loaded
+dmesg | egrep wireguard
+
+
+WireGuard enabled => create interface wireguard.cali
+
+ifconfig | egrep wireguard.cali
+
+Issue command to start eavesdropping
+tcpdump -s 0 -A host <MY-CUSTOMER-POD IP> | egrep HTTP
+
+
+Enabling Encryption
+kubectl patch felixconfiguration default --type='merge' -p '{"spec": {"wireguardEnabled":true} }'
+
+
+Verify Encryption
+kubectl debug -n calico-debugger node/$FIRST_NODE -it --image=mcr.microsoft.com/dotnet/runtime-deps:6.0
+
+chroot /host
+
+tcpdump -s 0 -A host <MY-CUSTOMER-POD-IP> | egrep HTTP
+
+
+ifconfig | egrep wireguard.cali
+wireguard.cali: flags=209<UP,POINTOPOINT,RUNNING,NOARP>  mtu 1340
+
+
+Disabling Encryption
+kubectl patch felixconfiguration default --type='merge' -p '{"spec":{"wireguardEnabled":false}}'
+
+kubectl delete --all -pods -n calico-debugger
+
+
+Securing Windows Workloads
+
+
+Calico for Windows
+
+az feature register --namespace "Microsoft.ContainerService" --name "EnableAKSWindowsCalico"
+
+az feature list -o table --query "[?contains(name, 'Microsoft.ContainerService/EnableAKSWindowsCalico')].{Name:name,State:properties.state}"
+
+az provider register --namespace Microsoft.ContainerService
+
+
+Creating Windows Pools
+
+az aks nodepool add --resource-group ccol2azure-week3-lab --cluster-name CalicoAKSCluster --os-type Windows --name calico --node-vm-size Standard_B2s --aks-customer-headers WindowsContainerRuntime=containerd --node-count 1
+
+
+Verify Windows node
+kubectl get node -L kubernetes.io/od
+
+
+Windows Workloads
+
+IMPORTANT
+Images deployed to Windows must match host kernel version
+
+kubectl get pods -n win-web-demo
+
+NAME                             READY   STATUS              RESTARTS     AGE
+web-container-67b55d9577-bdcd4   0/1     RunContainerError   2 (9s ago)   46s
+
+kubectl describe pod -l app=win-web-container -n win-web-demo | egrep -i error
+
+
+      Reason:       StartError
+  Warning  Failed     5m10s (x4 over 6m12s)  kubelet            Error: failed to create containerd task: failed to create shim task: hcs::CreateComputeSystem web-container: The container operating system does not match the host operating system.: unknown
+
+
+Use the following command to check the kernel version on each node
+kubectl get nodes -o jsonpath="{.items[*].status.nodeInfo"} | grep "{osImage,kernelVersion}"
+
+e.g.
+{
+  "osImage": "Ubuntu 18.04.6 LTS",
+  "kernelVersion": "5.4.0-1077-azure"
+}
+{
+  "osImage": "Windows Server 2019 Datacenter",
+  "kernelVersion": "10.0.17763.2803"
+}
+
+
+adjust the deployment image.
+
+
+kubectl get pods -n win-web-demo
+Running
+
+
+create a load balancer service
+service/win-container-service created
+
+
+Calico Global Default Deny 
+command to install the API server
+
+command to establish isolation
+GlobalNetworkPolicy
+
+
+Removing the AKS Cluster
+az aks delete --name CalicoAKSCluster --resource-group ccol2azure-week3-lab -y
+
+az group delete --resource-group ccol2azure-week3-lab -y
+
+kubectl config delete-cluster CalicoAKSCluster
+kubectl config delete-context CalicoAKSCluster-admin
+kubectl config delete-user clusterAdmin_ccol2azure_CalicoAKSCluster
+
+
+
+AKS Bring Your Own CNI
+Azure Preview Features
+
+az extension add -nname aks-preview
+
+az group create --name ccol2azure-week3-lab2 --location canadacentral
+
+az aks create --resource-group ccol2azure-week3-lab2 --name CalicoAKSCluster --node-count 1 --node-vm-size Standard_B2s --network-plugin none
+
+az aks get-credentials --resource-group ccol2azure-week3-lab2 --name CalicoAKSCluster --admin
+
+kubectl get nodes
+
+
+Node NotReady state = no CNI installed
+verify
+
+kubectl get node -o yaml | egrep -i cni
+        message:Network plugin returns error: cni plugin not initialized'
+
+
+Calico Installation
+kubectl create -f https://projectcalico.docs.tigera.io/archive/v3.21/manifests/tigera-operator.yaml
+
+
+Tuning Calico by Using the Operator
+create the Installation configuration so operator will set up hte CNI and enable various features
+
+
+e.g.
+kubectl apply -f - <<EOF
+apiVersion: operator.tigera.io/v1
+kind: Installation
+
+kubectl get nodes
+
+
+Tuning Calico for Azure
+
+Cloud Provider Support
+apiVersion: operator.tigera.io/v1
+kind: Installation
+metadata:
+  name: default
+spec:
+  kubernetesProvider: AKS
+
+
+Allowed Encapsulation Type
+Azure network fabric blocks IP-IP encapsulation
+change default IP-IP encapsulation of backend and ipPools to VXLAN mode
+
+Achieve this by adding bgp key and assign disabled value to calicoNetwork specifiation tree and adding encapsulation key with VXLAN value to ipPools sub-tree
+
+e.g.
+apiVersion: operator.tigera.io/v1
+kind: Installation
+metadata:
+  name: default
+spec:
+  calicoNetwork:
+    bgp: Disabled
+    ipPools:
+      encapsulation: VXLAN
+
+

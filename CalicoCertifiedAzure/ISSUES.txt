@@ -1,0 +1,45 @@
+ISSUES
+30/07/2022
+
+01.
+Week02
+Test Knowledge
+None
+
+
+
+02.
+Week03
+
+Calico for windows
+should be 
+Calico for Windows
+
+
+
+03.
+Week03
+
+ICMP Protocol
+https://courses.academy.tigera.io/courses/course-v1:tigera+CCO-L2-AZURE+CCO-L2-AZURE-2022/courseware/1e69a464057d4d02a60faa834ec38712/112eb46286104ed2b0e49796c5b10e6d/?child=first
+
+
+Q: should there be a "spec" at the top of this?
+apiVersion: operator.tigera.io/v1
+kind: Installation
+metadata:
+  name: default
+calicoNetwork:
+   nodeAddressAutodetectionV4:
+     canReach: 1.1.1.1
+
+
+e.g.
+apiVersion: operator.tigera.io/v1
+kind: Installation
+metadata:
+  name: default
+spec:
+ calicoNetwork:
+   nodeAddressAutodetectionV4:
+     canReach: 1.1.1.1
