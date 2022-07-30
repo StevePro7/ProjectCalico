@@ -1,0 +1,4 @@
+Calico Certified Azure 
+30/07/2022
+ 
+https://academy.tigera.io/course/certified-calico-operator-azure-expert
