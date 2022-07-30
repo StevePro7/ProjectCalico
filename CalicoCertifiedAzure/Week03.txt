@@ -261,3 +261,149 @@ spec:
       encapsulation: VXLAN
 
 
+ICMP Protocol
+Calico uses the ICMP protocol to determine the interface that can reach the Internet
+ICMP is disabled inside the Azure network fabric
+
+In eBPF mode, this can cause the outgoing nat not to work correctly. As a workaround, you should add the nodeAddressAutodetectionV4 key to the calicoNetwork tree specifications if you plan to deploy Calico inside Azure
+
+e.g.
+apiVersion: operator.tigera.io/v1
+kind: Installation
+metadata:
+  name: default
+spec:
+  calicoNetwork:
+    nodeAddressAutodetectionV4:
+      canReadh: 1.1.1.1
+
+
+Disabling Kube-proxy Pods
+Rancher K3s cannot disable kube-proxy daemonset
+
+However, you can configure Calico to run with the kube-proxy by adjusting the bpfKubeProxyiptablesCleanupEnabled flag
+e.g.
+
+kubectl patch felixconfiguration default --type=merge --patch='{"spec": {"bpfKubeProxyIPtablesCleanupEnabled": false}}'
+
+
+Microsoft Container Registry
+MCR images are usually behind Calico official repository
+
+
+
+Calico IPManagement
+az network vnet list -o table | egrep ccol2azure-week3-lab2
+
+kubectl  get node -o wide
+
+kubectl get ippool default-ipv4-ippool -o jsonpath="{.spec.cidr}"
+192.168.0.0/16
+
+
+Encapsulation
+one of the Calico features that can be used in a cloud provider environment to ease networking complexity
+
+Verify cluster is not using any encapsulation
+kubectl get installations default -o jsonpath="{.spec.calicoNetwork}" | jp
+
+e.g.
+backend encapsuation disabled but the ippools are using VXLAN
+
+"bgp": "Disabled",
+"ipPools": [
+    {
+      "blockSize": 26,
+      "cidr": "192.168.0.0/16",
+      "encapsulation": "VXLAN",
+      "natOutgoing": "Enabled",
+      "nodeSelector": "all()"
+    }
+  ],
+
+
+VNET routing table
+az network route-table list -o table
+
+az network route-table show -g <NAME-OF-YOUR-ROUTE-TABLE-RESOURCE-GROUP> --name <NAME-OF-YOUR-AKS-ROUTETABLE> --query "
+{addressPrefix:routes[].addressPrefix,nexthop:routes[]..netwHopIpAddress}"
+
+
+Considerations
+Calico ipPool resources use NAT outgoing to reach the Internet
+
+If you allocate another Public IP for workloads then you must add a User Defined Route entry to your VNET networking
+
+
+Deploying YAOBank 
+kubectl apply -f https://raw.githubusercontent.com/tigera/ccol2azure/main/week3/yaobank-org.yaml
+kubectl get deployments -A | egrep yao
+
+Deploying a Load Balancer
+
+
+Calico eBPF Dataplane
+eBPF Dataplane Advantages
+
+kubectl get svc -n yaobank-customer
+curl --silent -o /dev/null http://<YOUR_SERVICE_EXTERNAL_IP>/
+
+kubectl logs deployments/customer -n yaobank-customer
+
+
+Enabling the Calico eBPF Dataplane
+kubectl cluster-info | grep -i kubernetes
+
+Kubernetes control plane is running at https://calicoaksc-ccol2azure-week3.hcp.canadacentral.azmk8s.io:443
+
+
+Use the FQDN returned by the previous command and create a "kubernetes-services-endpoint" configmap.
+e.g.
+
+kubectl apply -f - <<EOF
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: kubernetes-services-endpoint
+  namespace: kube-system
+data:
+  KUBERNETES_SERVICE_HOST: "https://calicoaksc-ccol2azure-week3.hcp.canadacentral.azmk8s.io"
+  KUBERNETES_SERVICE_PORT: "443"
+EOF
+
+kubectl rollout restart deployments/tigera-operator -n tigera-operator
+kubectl rollout restart daemonset/calico-node -n calico-system
+
+
+Enable eBPF mode
+kubectl pathc felixconfiguration default --type=merge --patch='{"spec":{bpfEnabled":true}}'
+
+felixconfiguration.projectcalico.org/default patched
+
+
+eBPF Verification
+kubectl logs -n calico-system ds/calico-node | egrep -i "BPF enabled"
+
+
+Disabling kube-proxy
+disable kube-proxy by adding a node selector to kube-proxy Daemonset that matches no nodes
+e.g.
+kubectl patch ds -n kube-system kube-proxy -p '{"spec": {"template": {"spec": {"nodeSelector": {"non-calico": "true"}}}}}'
+
+
+Source IP Preservation
+external traffic will go directly to the endpoint workloads
+endpoint will be able to acquire end-user public IP address
+
+curl --silent -o /dev/null http://<YOUR_SERVICE_EXTERNAL_IP>/
+
+kubectl logs deployments/customer -n yaobank-customer
+
+
+Disabling eBPF
+
+disable eBPF dataplane
+kubectl patch felixconfiguration default --type=merge --patch='{"spec": {"bpfEnabled": false}}'
+
+spin up kube-proxy pods
+kubectl patch ds -n kube-system kube-proxy --type merge -p '{"spec":{"template":{"spec":{"nodeSelector":{"non-calico": null}}}}}'

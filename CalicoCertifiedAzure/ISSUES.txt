@@ -43,3 +43,13 @@ spec:
  calicoNetwork:
    nodeAddressAutodetectionV4:
      canReach: 1.1.1.1
+
+
+04.
+typo here
+https://courses.academy.tigera.io/courses/course-v1:tigera+CCO-L2-AZURE+CCO-L2-AZURE-2022/courseware/1e69a464057d4d02a60faa834ec38712/112eb46286104ed2b0e49796c5b10e6d/?child=first
+
+e.g.
+nexhop:routes
+
+az network route-table show -g <NAME-OF-YOUR-ROUTE-TABLE-RESOURCE-GROUP> --name <NAME-OF-YOUR-AKS-ROUTETABLE> --query "{addressPrefix:routes[].addressPrefix,nexhop:routes[].nextHopIpAddress}"
