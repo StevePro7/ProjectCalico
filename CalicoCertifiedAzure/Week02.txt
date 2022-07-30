@@ -66,3 +66,36 @@ kubectl delete networkpolicy -n yaobank-database default-deny
 
 
 Securing YAOBank with Calico Security Policy
+kubectl get networkpolicy -A
+
+
+kubectl apply -f https://raw.githubusercontent.com/tigera/ccol2azure/main/week2/01_allow_summary.yaml
+
+
+Installing Calico API Server
+kubectl get deployments -n calico-apiserver
+
+
+apiserver.operator.tigera.io/default created
+
+Calico Global Default Deny 
+
+Connectivity test
+kubectl exec -it -n yaobank-customer deployments/customer --  curl --connect-timeout 10 -LIs https://projectcalico.docs.tigera.io/ | egrep HTTP
+
+Security Policies
+Global Network Policy
+kubectl get globalnetworkpolicy
+kubectl get caliconetworkpolicy -A
+kubectl get networkpolicy -A
+
+
+
+Lab Cleanup
+az aks delete --name CalicoAKSCluster --resource-group ccol2azure-week2-lab -y
+
+az group delete --resource-group ccol2azure-week2-lab -y
+
+kubectl config delete-cluster CalicoAKSCluster
+kubectl config delete-context CalicoAKSCluster-admin
+kubectl config delete-user clusterAdmin_ccol2azure-week2-lab_CalicoAKSCluster
