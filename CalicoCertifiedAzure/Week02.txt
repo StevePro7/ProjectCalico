@@ -1,2 +1,68 @@
 Week02
-xx/xx/2022
+30/07/2022
+
+
+Deploying AKS kubenet with Calico
+az account list-locations -o table
+
+az aks get-versions --location canadacentral -o table
+
+az group create --name ccol2azure-week2-lab --location canadacentral
+
+
+az aks create --resource-group ccol2azure-week2-lab --name CalicoAKSCluster --node-count 1 --node-vm-size Standard_B2s --network-plugin kubenet --network-policy calico --pod-cidr 192.168.0.0/16 --generate-ssh-keys
+
+
+az aks get-credentials --resource-group ccol2azure-week2-lab --name CalicoAKSCluster --admin
+
+kubectl get nodes
+
+
+Kubenet IP Management
+az network vnet list -o table | egrep ccol2azure-week2-lab
+
+kubectl get node -o wide
+
+kubectl get configmap -n calico-system cni-config -o yaml
+
+kubectl cluster-info dump | epgre -i 'PodCIDR"'
+
+
+
+Kubenet Routing
+kubectl get installations default -o jsonpath="{.spec.calicoNetwork}" | jq
+
+az network route-table list -o table
+
+az network route-table show -g <NAME-OF-YOUR-ROUTE-TABLE-RESOURCE-GROUP> --name <NAME-OF-YOUR-AKS-ROUTETABLE> --query "{addressPrefix:routes[].addressPrefix,nexhop:routes[].nextHopIpAddress}"
+
+
+Considerations
+Routing is a Layer 3 concept and requires an additional hop to move the packet to its destination
+
+
+
+Deploying YAOBank 
+
+kubectl apply -f https://raw.githubusercontent.com/tigera/ccol2azure/main/week2/yaobank.yaml
+
+kubectl get deployments -A | egrep yao
+
+
+Deploying a Load Balancer
+kubectl get svc -n yaobank-customer yaobank-customer
+
+kubectl logs -n yaobank-customer deployments/customer
+
+
+Security Objectives
+Connectivity check
+
+kubectl exec -it -n yaobank-customer deployments/customer -- curl --connect-timeout 5 http://database.yaobank-database:2379/v2/keys?recursive=true | python -m json.tool
+
+
+Default Deny Policy
+kubectl delete networkpolicy -n yaobank-database default-deny
+
+
+Securing YAOBank with Calico Security Policy
