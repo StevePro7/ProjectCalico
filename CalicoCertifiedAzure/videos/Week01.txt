@@ -1,0 +1,169 @@
+Week01
+31/07/2022
+
+
+#1.
+Get Started With Azure Networking [Video]
+
+Azure
+vast network of physical Datacenters
+
+Azure Global Infrastructure
+massive network network of physical Datacenters
+
+Datacenter
+where the cloud lives we connect to
+
+Azure Datacenters
+physical buildings in the Azure Global Infrastructure
+
+Azure region
+group of Datacenters using a regional low latency network connection
+
+Azure geography
+one or more of these Azure regions
+
+Azure availability zones
+refer to physical locations in an Azure region that are tolerant
+to local failures
+
+each availability zones has independent power that is connected
+to the Azure Global Infrastructure
+
+Minimum 3x separate availability zones in all enabled Azure regions
+
+
+VNET
+Azure V[irtual] NETwork utilizes [network] address space and subnets
+to provide logically isolated networking space for your resources
+
+Resources assigned to a VNET will consume IP addresses that are available
+in the VNET subnet pool to establish networking
+
+All resources in same VNET can communicate w/ each other
+unless filters or subnet limitations applied
+
+
+#2.
+Kubernetes Cluster Options in Azure [Video]
+AKS	Managed
+BYOC	Self-Managed	Bring Your Own Cloud
+
+AKS
+run workloads w/o maintaining the control plane
+
+BYOC
+user relies on application that automates the deployment +
+helps w/ maintenance of the cluster
+
+
+AKS
+control plane = FREE
+fully managed by Azure = high-availability, redundancy
+integrate w/ Azure services like 
+ACI	Azure Container Instances
+ACR	Azure Container Registry
+AD	Azure Active Directory
+
+AKS has officially built-in support for Calico
+but
+cannot ssh into control plane nor see in cluster node list
+
+
+BYOC
+Self-Managed
+flexibility but limited 
+
+
+#3.
+Kubernetes Networking Options in Azure [Video]
+
+Azure offers two networking models w/ AKS cluster solution:
+
+Kubenet
+Azure CNI
+
+
+Azure CNI
+open source project
+both node and pod IPs are taken from the Azure VNET Subnet pool
+
+permit Azure resources to directly connect to the internal
+resources within the cluster and allows advances features
+e.g.
+virtual nodes
+Azure network policies to be used in that cluster
+
+IP address exhaustion is a huge drawback associated with Azure CNI
+e.g.
+small cluster runs out of IP address and need bigger subnet pool
+and migrate cluster
+
+
+Kubenet
+default option for creating a managed cluster in Azure
+simple network plugin that offers basic networking features to cluster
+run along other CNI plugins to implement features like policy enforcement
+
+Each node receives an IP address from the Azure virtual network subnet
+Pods receive IP addresses that are internal to the cluster from the
+local host IPAM plugin
+
+Your policy engine
+az aks create --network-plugin azure   --network-policy calico
+az aks create --network-plugin kubenet --network-policy calico
+
+
+Calico is officially baked into the Azure Managed Services
+i.e. for network policy enforcement
+
+use Calico security policy engine by adding argument to AKS deployment
+--network-policy calico
+
+
+#4.
+Kubernetes Network Security in Azure [Video]
+Resource
+
+Network Security Group
+w/o NSG associated w/ your network capable resources, no one can access
+them from the outside
+
+Network Security Rule
+each NSG groups together many NSRs
+way to classify network traffic
+
+NSR
+Name
+Priority
+Source / Dest
+Protocol
+Direction
+Port Range
+Action
+
+Not recommended to use NSGs to secure Kubernetes cluster
+instead
+use a policy engine to enforce security w/in your cluster borders
+
+Kubernetes has Network Policy resource but does not enforce these 
+network policies by default - it delegates the enforcement to CNIs
+
+
+Network Policy can be applied to Pods, IP CIDRs, protocols, ports
+directions
+
+Calico security policy applied to network cards, containers, service
+accounts side by side w/ Kubernetes network policy
+
+
+Azure policy addon
+can be enabled on-demand in AKS clusters
+can only be deployed to Linux node pools
+can only be enabled in clusters equipped w/ Azure CNI
+i.e.
+locked to one Vendor = Microsoft
+
+
+#5.
+Exposing Services Outside the Cluster [Video]
