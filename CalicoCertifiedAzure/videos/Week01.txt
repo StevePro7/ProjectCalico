@@ -167,3 +167,28 @@ locked to one Vendor = Microsoft
 
 #5.
 Exposing Services Outside the Cluster [Video]
+remember pods are ephemeral!
+
+Kubernetes services 
+abstract way to expose Pods by using a single DNS entry
+
+NodePort	accessed externally
+publish a node port on the Internet you need to use Network Address Translation i.e. NAT
+
+LoadBalancer
+service gets public IP address from the cloud providers infrastructure
+allowing requests to be offloaded directly to the cloud providers infrastructure and then sent to the cluster
+
+great for scale as the cloud provider can handle massive number of
+requests but LoadBalancer is unaware of cluster size = can send
+traffic unequally to pods which might render cluster unresponsive
+
+
+Ingress [Kubernetes service]
+elegant way to expose HTTP(S) routes to cluster services
+
+create an Ingress service in your cluster after installing an Ingress
+controller
+
+Ingress controller can receive traffic and figure our the user's desired destination by examining URL path or prefix => re-routing traffic to the
+responsible service(s) inside the cluster
