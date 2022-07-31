@@ -192,3 +192,38 @@ controller
 
 Ingress controller can receive traffic and figure our the user's desired destination by examining URL path or prefix => re-routing traffic to the
 responsible service(s) inside the cluster
+
+Azure classic Load Balancers have two types both of which operate in Layer 4 of the OSI model
+1. Basic
+2. Standard
+
+Azure also has AGIC
+Application Gateway Ingress Controller
+that can be used to avoid multiple hops
+
+AGIC talks directly to pods by using their private IP address and
+doesn't require KubeProxy services to establish communication
+
+
+HTTP traffic routing
+can find in AKS cluster networking tab in the Azure portal
+but currently not suitable for Production environment
+
+
+Client source IP
+
+when traffic hits your cluster the client source IP changes
+Why?
+because kube-proxy pods that are in charge of moving the traffic use
+Network Address Translation to move it
+
+but
+Azure AGIC provides workaround that can attach the client IP address
+to the request as an HTTP forwarder-for header but you have to give up
+features like TLS pass-through
+
+big deal since you don't have the external client IP address to
+associate with things like logs, debugging, or security concerns
+...
+eBPF dataplane
+elegant solution for the source IP problem
