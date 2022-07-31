@@ -1,0 +1,43 @@
+Exam
+31/07/2022
+
+
+01-Section #1.
+After deploying an HTTP workload in your cluster, which Kubernetes service or services are able to control traffic at the application level?
+
+
+In AKS clusters, VNET IP address exhaustion is associated with which CNI?
+Azure-CNI
+
+
+In an AKS cluster configured with the Kubenet CNI which of these options allows two nodes to communicate with each other?
+
+
+Which one of these options is the Azure infrastructure-as-a code solution?
+Azure Resource Manager
+
+
+Which one of these options can be used to communicate directly with the workload's private IP and bypass kube-proxy pods?
+
+
+What is the minimum number of availability zones in all Azure availability-zone enabled regions?
+Three availability zones
+
+
+Which service or services can expose a workload to the outside of a cluster?
+NodePort
+LoadBalancer
+
+
+Which of these technologies can be a replacement for kube-proxy pods?
+Calico's eBPF dataplane
+
+
+Which of these Azure services can add end-to-end TLS security for HTTP workloads?
+
+
+A Group of physical buildings connected with a regional low-latency connection is called?
+Azure region
+
+
+02-Section #2.

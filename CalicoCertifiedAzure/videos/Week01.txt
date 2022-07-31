@@ -80,8 +80,8 @@ Kubernetes Networking Options in Azure [Video]
 
 Azure offers two networking models w/ AKS cluster solution:
 
-Kubenet
-Azure CNI
+Kubenet		networking models
+Azure CNI	networking models
 
 
 Azure CNI
@@ -215,7 +215,7 @@ Client source IP
 when traffic hits your cluster the client source IP changes
 Why?
 because kube-proxy pods that are in charge of moving the traffic use
-Network Address Translation to move it
+Network Address Translation i.e. NAT to move it
 
 but
 Azure AGIC provides workaround that can attach the client IP address
@@ -226,4 +226,4 @@ big deal since you don't have the external client IP address to
 associate with things like logs, debugging, or security concerns
 ...
 eBPF dataplane
-elegant solution for the source IP problem
+elegant solution for the source IP problem + more throughput
