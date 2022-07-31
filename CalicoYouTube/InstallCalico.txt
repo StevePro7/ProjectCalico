@@ -1,0 +1,33 @@
+Kubernetes tutorial: Learn to Secure Kubernetes Network using Calico
+31/07/2022
+
+
+https://www.ecloudcontrol.com/learn-to-deploy-a-kubernetes-cluster-in-30-minutes-using-kubeadm/
+https://www.ecloudcontrol.com/kubernetes-namespace-isolation-at-the-network-level-with-calico
+
+
+
+ssh -i master_ssh_key ubuntu@NODE_PUBLIC_IP_ADDRESS
+
+
+where master_ssh_key could be found at
+/.local/crc/kubeadm/aws
+
+
+OR
+github.com/luksa/kubectl-plugins
+./kubectl-ssh node ip-172.XX.XX.XX.us-west-2.compute.internal
+
+
+SSH in to all 3x nodes
+follow instructions from here
+https://www.ecloudcontrol.com/learn-to-deploy-a-kubernetes-cluster-in-30-minutes-using-kubeadm
+
+
+cat <<EOF | sudo tee /etc/apt/sources.list.d/kubernetes.list 
+deb https://apt.kubernetes.io/ kubernetes-xenial main 
+EOF
+
+
+
+kubectl run -i --tty client0 --image=tutm/curl -n=test1

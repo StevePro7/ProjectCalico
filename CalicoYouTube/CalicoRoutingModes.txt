@@ -1,0 +1,26 @@
+Calico Routing Modes
+31/07/2022
+
+https://www.youtube.com/watch?v=MpbIZ1SmEkU
+
+Reference
+https://joshrosso.com/docs/2020/2020-10-01-calico-routing-modes
+
+
+IP tunnel
+https://en.wikipedia.org/wiki/IP_tunnel
+IP network communications channel between two networks
+
+
+IP in IP
+https://en.wikipedia.org/wiki/IP_in_IP
+An IP tunneling protocol that encapsulates one IP packet into another
+
+Virtual Extensible LAN
+VXLAN
+https://en.wikipedia.org/wiki/Virtual_Extensible_LAN
+A network virtualization technology that attempts to address the scalability problems associated with large cloud computing deployments
+
+VXLAN uses a VLAN like encapsulation technique to encapsulate layer 2 Ethernet frames within layer 4 UDP datagrams using 4789 destination UDP port number
+
+VXLAN endpoints, which terminate VXLAN tunnels and may either be virtual or physical switch ports, are known as VXLAN Tunnel EndPoints [VTEPs]
