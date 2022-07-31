@@ -96,3 +96,230 @@ sudo ./calicoctl node status
 OR
 sudo cp calicoctl /usr/local/bin/
 sudo calicoctl node status
+
+
+Listed are the 4x worker nodes calico is peered with 
+
+
+FELIX
+Felix is responsible for programming the hosts route table
+
+ssh onto master
+route -n
+
+routing table
+
+calico runs by default in IP-in-IP mode
+thus you would see tunl0 interfaces
+the way link the nodes from a routing perspective
+
+the "cali" interfaces are pod IP addr that are on this node
+the "cali" interfaces are leveraged for enforcing policy
+
+packet routes in and goes to the interface thru IP-in-IP rules
+OR IP-in-IP chains rules
+
+BPG sharing routes + Felix is programming the hosts route table so
+packets know where to go
+
+
+Routing modes
+IP-in-IP	mode	default	encapsulation
+Direct		unencapsulated routing mode
+VXLAN		encapsulation no BGP
+
+
+ssh -i master_ssh_key ubuntu@WORKER_PUBLIC_IP
+
+
+IP-in-IP
+pod1 - pod2
+
+Puts a packet in another packet
+Outer Header + Inner Header
+
+Outer Header 
+srce	node
+dest	node
+proto	IPIP
+
+Inner Header
+srce	pod
+dest	pod
+proto	TCP
+
+
+Direct 
+unencapsulated traffic
+highly performant
+
+
+Calico
+IP Pool
+e.g.
+sudo calicoctl --allow-version-mismatch get ippool
+NAME                  CIDR             SELECTOR   
+default-ipv4-ippool   192.168.0.0/16   all()  
+
+
+sudo calicoctl --allow-version-mismatch get ippool -o yaml
+
+
+spec:
+  blockSize: 26
+  cidr: 192.168.0.0/16
+  ipipMode: Never
+  natOutgoing: true
+  nodeSelector: all()
+  vxlanMode: Never
+
+
+All you need to do to change calico to use "direct" routing mode is to
+change ipipMode from Always [default] to Never
+ipipMode: Always
+ipipMode: Never
+
+
+All of the "tunl0" interfaces changes to "ens5"
+i.e.
+now no more tunneling => direct via eth0 type network interface
+and the Gateway changes for different subnets
+
+
+IMPORTANT
+direct routing and source / destination checks
+
+AWS Dashboard
+EC2 Instances
+click instance | Actions | Networking | Change srce/dest check
+
+
+only one header now in "direct" routing mode
+TCP protocol only
+pod IPs
+
+
+Ethernet II
+Dest	worker 2 MAC address
+Srce	worker 1 MAC address
+
+worker 1
+ip addr
+see the corresponding MAC address
+
+
+direct mode fails when routing across different subnets
+but
+
+IP-in-IP has 
+CrossSubnet option available
+
+when I am traversing a subnet boundary I'm going to encapsulate using
+IP and IP but when I'm not i.e. communicating inside of the same subnet,
+I am going to do the direct unencapsulating routing
+
+
+update IPPool
+spec:
+  blockSize: 26
+  cidr: 192.168.0.0/16
+  ipipMode: CrossSubnet
+  natOutgoing: true
+  nodeSelector: all()
+  vxlanMode: Never
+
+
+switched back to tunnel interface for different subnet route
+i.e.
+tunl0
+
+
+VXLAN
+encapsulation like technology
+tunneling protocol
+encapsulates layer2 ethernet frames into UDP packets
+create virtual L2 networks
+
+
+Why VXLAN
+you can't use IP-in-IP 'cos your network won't allow BGP route sharing
+OR
+IP-in-IP doesn't work
+
+
+Old days
+calico	policy enforcement
+flannel	routing
+
+
+Download calico manifest YAML
+IP-in-IP by default
+BGP	default route share
+
+#1.
+change calico backend from bird to vxlan
+
+ConfigMap
+data:
+  calico_backend: "bird"
+  calico_backend: "vxlan"
+
+
+#2.
+IPPool in Felix config
+- name: CALICO_IPV4POOL_IPIP
+- name: CALICO_IPV4POOL_VXLAN
+
+
+#3.
+Disable bird liveness / readiness checks
+remember bird is what facilitates BGP functionality
+thus bird liveness / readiness checks would fail
+
+livenessProbe:
+  exec:
+    command:
+    - /bin/calico-node
+    - -felix-live
+    #- -bird-live
+
+
+readinessProbe:
+  exec:
+    command:
+    - /bin/calico-node
+    - -felix-ready
+    #- -bird-ready
+
+
+ssh on to nodes
+route -n
+
+now there are 
+vxlan.calico
+
+Wireshark
+Ethernet II
+Internet Protocol			srce/dest hosts
+User Datagram Protocol
+Virtual eXtensible Local Area Network
+Ethernet II				virtual layer2 packet inside
+
+IMPORTANT
+the 2nd Ethernet II has the MAC address that matches
+ip addr | grep vxlan
+
+operating on that extra virtual layer2 network so we're really
+virtualizing that entire network and not just doing simple IP-in-IP
+encapsulation w/ that extra outer IP header that we're routing things
+around
+
+
+SUMMARY
+route sharing capabilities 
+BGP feature set that gets used in IP-in-IP and direct where we have 
+these bird daemons that can peer together, share routes but in VXLAN
+we completely disable BGP altogether and do not use it
+
+route btwn different zones and the implications going btwn subnets
+depending on our routing methods
