@@ -24,3 +24,75 @@ A network virtualization technology that attempts to address the scalability pro
 VXLAN uses a VLAN like encapsulation technique to encapsulate layer 2 Ethernet frames within layer 4 UDP datagrams using 4789 destination UDP port number
 
 VXLAN endpoints, which terminate VXLAN tunnels and may either be virtual or physical switch ports, are known as VXLAN Tunnel EndPoints [VTEPs]
+
+
+ROUTE SHARING
+Calico uses BGP to distribute routes amongst hosts
+Calico node pods run on every host
+
+
+VXLAN is great for networks that do not support IP-in-IP like Azure
+or don't support BPG which is disabled in VXLAN mode
+
+
+BGP
+Border Gateway Protocol
+https://en.wikipedia.org/wiki/Border_Gateway_Protocol
+protocol designed to exchange routing and reachability information among autonomous systems on the the Internet
+
+
+Route Sharing
+Calico uses BGP Border Gateway Protocol to share routes
+
+BGP protocol enables our nodes to peer together and communicate what routes they know about
+
+
+kubectl get pods -n calico-system
+kubectl get po -n calico-system calico-node-7cp4m -o yaml
+
+
+    readinessProbe:
+      exec:
+        command:
+        - /bin/calico-node
+        - -bird-ready 
+        - -felix-ready
+        - -bgp-metrics-ready
+
+
+Felix
+bird
+
+
+Calico uses BIRD to facilitate BGP route sharing
+bird works in calico node instance and mesh / share routes btwn
+all the different nodes
+
+NB:
+Calico does support more advanced configurations
+e.g.
+route reflectors
+top of rack switches
+that support communicating w/ BGP
+
+
+Once the routes are shared then look at Felix
+
+calicoctl
+https://projectcalico.docs.tigera.io/maintenance/clis/calicoctl/install
+
+ssh into master node and install calicoctl
+e.g.
+ssh -i master_ssh_key ubuntu@MASTER_NODE_PUBLIC_IP
+
+ubuntu@ip-172-16-101-248:
+curl -L https://github.com/projectcalico/calico/releases/download/v3.23.3/calicoctl-linux-amd64 -o calicoctl
+
+chmod +x ./calicoctl
+
+calicoctl version
+sudo ./calicoctl node status
+
+OR
+sudo cp calicoctl /usr/local/bin/
+sudo calicoctl node status
