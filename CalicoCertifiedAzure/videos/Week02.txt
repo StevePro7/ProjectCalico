@@ -1,0 +1,122 @@
+Week02
+01/08/2022
+
+
+#1.
+AKS Deployment Overview [Video]
+
+Multiple ways to deploy AKS cluster
+- Azure portal GUI
+- ARM templates
+- Azure CLI
+
+
+Azure portal
+official GUI to create, manage, deploy your AKS cloud resources
+always up-to-date
+
+Create resource
+Kubernetes service
+create
+
+Region
+close to customers
+each region has 3x Availability zones	three
+
+You need to select more than one >1 availability zone here to have
+availability among your control plane nodes
+
+If Kubernetes workloads require specific version of Kubernetes then
+adjust it here
+
+
+Default node code value = 3 three
+free a/c may have issue when upgrade cluster
+
+always choose 1 node [one] as necessary
+
+
+In Azure, nodes are members of a node pool
+click current node pool
+
+IMPORTANT
+first node in node pool must be a Linux machine to run the Kubernetes
+system workloads
+i.e.
+cannot be Windows for first node
+
+Optional settings
+max pods per node dropdown
+how many pods are allowed to run on a single node
+minimum value is 10 ten	hardcoded by Azure
+
+max pods per node
+250 Azure CNI
+110 kubenet
+
+value enforced by AKS services
+if you need to increase max pods per node after deployment then 
+you must create another node pool w/ the new setting and migrate
+all of your workloads to the new node pool
+
+
+If you add a Windows node to your cluster as a secondary node
+[remember that first node in node pool must be Linux node]
+then you need to make sure the plugin under networking tab is set to
+Azure CNI otherwise you will get error
+
+Windows node pools are not supported on kubenet clusters
+
+
+
+Networking CNI options
+Kubenet
+Azure CNI
+
+Network policy options
+Node
+Calico
+Azure
+
+IMPORTANT
+Azure network policy is not compatible with kubenet networking
+
+
+Matrix
+Network configuration		Network policy
+kubenet				None, Calico
+Azure CNI			None, Calico, Azure
+
+
+Portal
+kubenet networking plug-in	creates new VNet for cluster
+Azure CNI networking plug-in	allows clusters to use new/exist VNet 
+
+
+Calico network policy deployed to AKS will install version of Calico
+from Microsfot image repository
+
+None option = Kubernetes cluster without a policy enforcer but you can
+install the latest version of Calico and manually configure it
+
+
+Other tabs / options require configuring all Azure CNI latest vendor
+based features
+
+
+ARM
+Azure Resoure Manager is a declarative way to deploy Azure resources
+using code
+
+ARM template is a regular JSON file that contains detail what resources
+must be deployed
+
+Export ARM template => use w/ Azure CLI or Azure portal to create resources
+
+Azure CLI is the official command-line utility to interact w/ the 
+Azure cloud platform
+
+
+
+#2.
+Kubernetes Network Policy [video]
