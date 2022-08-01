@@ -120,3 +120,77 @@ Azure cloud platform
 
 #2.
 Kubernetes Network Policy [video]
+
+Kubernetes network policy resources implemented
+e.g.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+
+
+network policy only affects the database namespace
+i.e.
+used namespace in the metadata section
+
+
+NOTE
+Kubernetes network policy resource requires a namespace and when you 
+don't express one then it will automatically be assigned to default ns
+
+
+Add podselector with a loose condition
+i.e.
+podselector: {}
+
+which means that all pod traffic that happen in that DB namespace
+are qualified
+
+by declaring the direction of traffic we concluded our policy and
+created isolation in the DB namespace and successfully blocked everyone
+from accessing our services in this namespace
+
+
+Next we created a permit policy to let our customers in
+this time the podSelector was more restrictive
+e.g.
+podSelector:
+  matchLabels:
+    app: database
+
+by attaching match labels we declared that this policy should affect any pod that has the "app: database" label
+
+
+Ingress
+for inbound traffic we expressed that every traffic that comes from a 
+namespace with the "ns: summary" label and was initiated by a pod
+with the "app: summary" label should only be affected
+i.e.
+
+ingress:
+- from:
+  - namespaceSelector:
+      matchLabels:
+        ns: summary
+  - podSelector:
+      matchLabels:
+        app: summary
+
+
+Egress
+in the same policy for the outbound traffic or Egress ahd the same
+express database namespace is only permitted to talk to Pods that have an 
+"app: summary" label located in a namespace with "ns: summary" label
+
+i.e.
+egress:
+- from:
+  - namespaceSelector:
+      matchLabels:
+        ns: summary
+  - podSelector:
+      matchLabels:
+        app: summary
+
+
+IMPORTANT
+when you want to establish isolation in multiple namespaces then you
+need to write a deny policy for each one individually
