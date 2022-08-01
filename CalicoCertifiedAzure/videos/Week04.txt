@@ -1,3 +1,46 @@
 Week04
 01/08/2022
 
+#1.
+Self-managed clusters [video]
+
+Deploy self-managed cluster in Azure
+
+kOps in Calico AWS is in the alpha stages of Azure adoption
+and will error out during the cluster creation
+
+Rancher requires explanation on how to create an Azure VM
+
+kubespray requires knowledge in Ansible
+
+
+SUMMARY
+Cluster API
+a Kubernetes sub project w/ effort to use Kubernetes style APIs to
+automate cluster lifecycle management
+
+Declarative = idempotent
+
+supports all major cloud providers thru Kubernetes cloud provider APIs
+
+
+C API
+lives inside Kubernetes
+uses CRDs custom reource definitions to extend ordinary Kubernetes cluster into capable maintainer and deployment solution
+  
+after deployment
+cluster = management cluster
+
+
+C APZ
+allow management cluster to communicate w/ Azure
+
+after installing the provider, delcare cloud account identity
+then apply YAML file to the management cluster
+
+C API uses C APZ to issue API commands and Azure will translate those
+into cloud resources
+
+
+Finally, due to current limitations, we cannot use CloudShell to run
+our local management cluster
