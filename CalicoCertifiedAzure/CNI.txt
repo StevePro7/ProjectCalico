@@ -1,0 +1,14 @@
+CNIs
+01/08/2022
+
+https://docs.microsoft.com/en-us/azure/aks/use-network-policies
+
+
+Supported networking policy
+Azure			Linux only
+Calico			Linux and Windows
+
+Supported networking options
+Azure	Azure CNI
+Calico	Azure CNI	Linux and Windows
+Calico	kubenet		Linux only

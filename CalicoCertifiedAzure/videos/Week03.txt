@@ -42,3 +42,13 @@ Azure NOT support IP-in-IP encapsulation
 bpfKubeProxyiptablesCleanupEnabled 
 
 Calico ipPool resources use NAT outgoing to reach the Internet
+
+
+Knowledge Check
+Wireguard implements Node to Node encryption	by default
+
+Calico CNI can be used to enforce policy for both Linux and Windows
+Azure  CNI can be used to enforce policy for only Linux
+
+Reference:
+https://docs.microsoft.com/en-us/azure/aks/use-network-policies
