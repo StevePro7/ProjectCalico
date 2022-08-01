@@ -84,6 +84,24 @@ Kubenet		networking models
 Azure CNI	networking models
 
 
+
+Azure CNI
+Azure VNET
+Address space
+10.0.0.0/16
+specify azure for advanced networking configuration
+
+Kubenet
+default
+
+
+VNET address range : 10.0.0.0/16
+Subnet pool : 10.0.0.0/24
+Cluster cidr : 192.168.0.0/24
+
+
+
+
 Azure CNI
 open source project
 both node and pod IPs are taken from the Azure VNET Subnet pool

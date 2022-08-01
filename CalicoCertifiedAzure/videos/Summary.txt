@@ -2,6 +2,7 @@ Summary
 31/07/2022
 
 
+Week01
 Calico CNI
 Which of these options can be used to enforce policy resources in an AKS cluster?
 According to the following details, which CNIs can be used in this AKS cluster?
@@ -29,3 +30,6 @@ In an AKS cluster that uses Kubenet-CNI, which one of these options can preserve
 
 Routing
 An overlay tunnel such as VXLAN is used for what purpose?
+
+
+Week02

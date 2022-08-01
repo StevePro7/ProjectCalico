@@ -30,7 +30,7 @@ If Kubernetes workloads require specific version of Kubernetes then
 adjust it here
 
 
-Default node code value = 3 three
+Default node count value = 3 three
 free a/c may have issue when upgrade cluster
 
 always choose 1 node [one] as necessary
@@ -74,7 +74,7 @@ Kubenet
 Azure CNI
 
 Network policy options
-Node
+None
 Calico
 Azure
 
@@ -105,7 +105,7 @@ based features
 
 
 ARM
-Azure Resoure Manager is a declarative way to deploy Azure resources
+Azure Resource Manager is a declarative way to deploy Azure resources
 using code
 
 ARM template is a regular JSON file that contains detail what resources
@@ -200,14 +200,14 @@ need to write a deny policy for each one individually
 #3.
 Calico Security Policy [Video]
 Implement a GlobalNetwork policy to lockdown the cluster and a couple
-of network policies to permit communcation btwn customers and summary
+of network policies to permit communication btwn customers and summary
 namespace
 
 
 But we need this
 spec:
   namespaceSelector:
-    has(projectcalico.org/name) && projectcalico.org/name not in {"kube-system", "calico-apiserver"}
+    has(projectcalico.org/name) && projectcalico.org/name not in {"kube-system", "calico-apiserver", "calico-system"}
 
 
 Why?
