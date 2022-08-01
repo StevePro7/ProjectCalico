@@ -132,7 +132,7 @@ az aks nodepool add --resource-group ccol2azure-week3-lab --cluster-name CalicoA
 
 
 Verify Windows node
-kubectl get node -L kubernetes.io/od
+kubectl get node -L kubernetes.io/oS
 
 
 Windows Workloads
@@ -198,7 +198,7 @@ kubectl config delete-user clusterAdmin_ccol2azure_CalicoAKSCluster
 AKS Bring Your Own CNI
 Azure Preview Features
 
-az extension add -nname aks-preview
+az extension add -name aks-preview
 
 az group create --name ccol2azure-week3-lab2 --location canadacentral
 
@@ -209,7 +209,7 @@ az aks get-credentials --resource-group ccol2azure-week3-lab2 --name CalicoAKSCl
 kubectl get nodes
 
 
-Node NotReady state = no CNI installed
+Node NotReady status = no CNI installed
 verify
 
 kubectl get node -o yaml | egrep -i cni
@@ -221,7 +221,7 @@ kubectl create -f https://projectcalico.docs.tigera.io/archive/v3.21/manifests/t
 
 
 Tuning Calico by Using the Operator
-create the Installation configuration so operator will set up hte CNI and enable various features
+create the Installation configuration so operator will set up the CNI and enable various features
 
 
 e.g.

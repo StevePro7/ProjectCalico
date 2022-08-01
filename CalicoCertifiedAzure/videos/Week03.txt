@@ -1,3 +1,44 @@
 Week03
 01/08/2022
 
+#1.
+AKS Hybrid Clusters [Video]
+
+Hybrid cluster
+aks-nodepool1	linux
+akscalico0000	windows
+
+
+AKS allows you to create windows node pools that can host these types of containers
+
+How to secure windows nodes?
+
+Calico offers a free solution for Windows nodes
+Calico for Windoes installation is officially integrated into the Azure platform but you must enable it manually => not GA
+
+Each time you add Windows node to Windows node pool, Calico comes w/
+preinstalled version of Calico for Windows
+
+Calico for Windows offers
+Policy enforcement
+VXLAN Encapsulation
+Windows HNS dataplane
+
+HNS
+Host Networking Service
+
+
+
+IMPORTANT
+wireguard.cali
+
+kubectl get node -L kubernetes.io/oS
+
+Images deployed to Windows must match host kernel version
+The container operating system does not match the host operating system.: unknown
+
+Azure NOT support IP-in-IP encapsulation
+
+bpfKubeProxyiptablesCleanupEnabled 
+
+Calico ipPool resources use NAT outgoing to reach the Internet
