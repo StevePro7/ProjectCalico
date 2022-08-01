@@ -194,3 +194,56 @@ egress:
 IMPORTANT
 when you want to establish isolation in multiple namespaces then you
 need to write a deny policy for each one individually
+
+
+
+#3.
+Calico Security Policy [Video]
+Implement a GlobalNetwork policy to lockdown the cluster and a couple
+of network policies to permit communcation btwn customers and summary
+namespace
+
+
+But we need this
+spec:
+  namespaceSelector:
+    has(projectcalico.org/name) && projectcalico.org/name not in {"kube-system", "calico-apiserver"}
+
+
+Why?
+GlobalNetwork policy affects both namespace and non-namespace environments and without exceptions could disrupt service
+e.g.
+Calico needs to communicate with the kube-system namespace
+and
+Kubernetees DNS service - DNS pods are located in the kube-system
+namespace and total isolation blocks the DNS queries that are
+launched by cluster resources
+
+
+So
+we create a general exemption for the essential Kubernetes services
+that can work in any environment
+
+logic uses unique Calico definition to tell Calico policy engine
+that we are interested in network traffic from the namespace
+environment that are not part of this exception list
+
+
+Why egress policy?
+kube-system [used for DNS queries] can send + recd traffic,
+but workload namespaces remain in isolation which means their
+inbound + outbound communication is blocked
+
+
+Solution
+implement a cluster-wide Egress or outbound policy that targets UDP
+traffic on port 53 and lets all namespaced resources to send traffic
+to pods that a kube-dns label
+
+egress:
+- action: Allow
+  protocol: UDP
+  destination:
+    selector: k8s-app == "kube-dns"
+  port:
+  - 53
