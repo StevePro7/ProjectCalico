@@ -218,7 +218,8 @@ Deploying Istio Manifests
 kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/microservices-demo/release/v0.3.6/release/istio-manifests.yaml
 
 
-Use command to add struct rule to add mutual authentication btwn workloads and sidecar
+Use command to add strict rule to add mutual authentication btwn workloads and sidecar
+[mTLS]
 
 apiVersion: security.istio.io/v1beta1
 kind: PeerAuthentication

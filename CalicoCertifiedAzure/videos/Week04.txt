@@ -44,3 +44,25 @@ into cloud resources
 
 Finally, due to current limitations, we cannot use CloudShell to run
 our local management cluster
+
+
+
+IMPORTANT
+
+Azure Cluster Identity
+A CRD representing service principal secret
+
+
+Kubeadmcontrolplane CRD inside management cluster represents control plane nodes
+
+Azure blocks IP-IP traffic
+
+Istio/Calico
+enforce application-layer L7 network policy w/in Istio service mesh
+
+Dikastes enforces network policy for the Istio service mesh
+
+Dikastes container talks to Felix using FlexVolume driver to enable secure connectivity 
+
+"sidecar.istio.io/inject"
+kubectl patch deployment frountend --patch '{"spec": {"template": {"metadata": {"labels": {"sidecar.istio.io/inject": "true"}}}}}'
