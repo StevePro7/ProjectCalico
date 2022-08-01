@@ -9,7 +9,7 @@ Azure
 vast network of physical Datacenters
 
 Azure Global Infrastructure
-massive network network of physical Datacenters
+massive network of physical Datacenters
 
 Datacenter
 where the cloud lives we connect to
@@ -89,7 +89,7 @@ open source project
 both node and pod IPs are taken from the Azure VNET Subnet pool
 
 permit Azure resources to directly connect to the internal
-resources within the cluster and allows advances features
+resources within the cluster and allows advanced features
 e.g.
 virtual nodes
 Azure network policies to be used in that cluster
@@ -210,9 +210,9 @@ can find in AKS cluster networking tab in the Azure portal
 but currently not suitable for Production environment
 
 
-Client source IP
+Client source IP address preservation
 
-when traffic hits your cluster the client source IP changes
+when traffic hits your cluster the client source IP address changes
 Why?
 because kube-proxy pods that are in charge of moving the traffic use
 Network Address Translation i.e. NAT to move it
