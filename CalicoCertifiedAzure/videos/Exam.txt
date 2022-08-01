@@ -7,14 +7,19 @@ After deploying an HTTP workload in your cluster, which Kubernetes service or se
 
 
 In AKS clusters, VNET IP address exhaustion is associated with which CNI?
-Azure-CNI
+>Azure-CNI
 
 
 In an AKS cluster configured with the Kubenet CNI which of these options allows two nodes to communicate with each other?
+>Route?
+>NAT	think it might be
+
 
 
 Which one of these options is the Azure infrastructure-as-a code solution?
 Azure Resource Manager
+
+
 
 
 Which one of these options can be used to communicate directly with the workload's private IP and bypass kube-proxy pods?
@@ -34,10 +39,29 @@ Calico's eBPF dataplane
 
 
 Which of these Azure services can add end-to-end TLS security for HTTP workloads?
+Azure load balancers
 
 
 A Group of physical buildings connected with a regional low-latency connection is called?
 Azure region
 
 
+Which one of these options can be used to communicate directly with the workload's private IP and bypass kube-proxy pods?
+Application Gateway Ingress Controller
+
+
+What is the minimum number of availability zones in all Azure availability-zone enabled regions?
+Three availability zones
+
+
 02-Section #2.
+
+Which statements are TRUE about the following policy?
+Egress traffic is blocked from all namespaces except "kube-system".
+Ingress traffic is blocked to all namespaces except "kube-system".
+
+
+A Kubernetes network policy can be used to establish cluster-wide isolation
+False
+
+Which of the following are correct statements about an AKS cluster configured with Kubenet?
