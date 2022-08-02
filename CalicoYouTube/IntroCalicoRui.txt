@@ -2,3 +2,85 @@ Introduction to Calico for eBPF, Linux and Windows Data Planes
 31/07/2022
 
 https://www.youtube.com/watch?v=cWU7LbtpADo&t=26s
+
+
+systemctl status kubelet
+
+
+cat /etc/cni/etd.d
+cat /etc/cni/etd.d/10_calico
+
+
+
+kubectl describe -n kube-system kubeadm-config
+
+
+calico-node
+creates veth pairs for pods to be attached to the nodes
+handles the network policies as well
+
+
+kubectl get apiservice
+
+kubectl api-resources
+
+
+calico-kube-controllers
+network policy based on labels and selectors
+as
+cannot base network security on pods IP addresses
+[ephemeral]
+
+
+
+calico-typha
+sits in between
+calico node and calico api server
+multiplex messages
+don't want every calico node connecting to the calico api server
+
+
+ssh worker1
+
+ip route
+
+IP addresses connected to ineterface that calico created
+
+
+
+kubectl api-resources | grep network
+
+
+
+YAO Bank
+ssh into customer pod	Web UI
+
+for i in {1..5000}; do curl --connect-timeout 1 http://database:2379/v2/keys?recursive=true ; sleep 3; done
+
+
+
+control plane
+handles the traffic routing
+
+
+data plane
+represents the traffic in that network
+
+
+eBPF
+ssh into calico-node
+
+get database pod
+
+
+calico-node -bpf conntrack dump | grep <database_ip>
+
+
+
+enable ebpf
+create configMap	tell calico-node now to comm w/ k8s api server
+remove kube-proxy
+enable eBPF dataplane
+i.e.
+update Installation YAML config 
+Linux Dataplane: BPF
