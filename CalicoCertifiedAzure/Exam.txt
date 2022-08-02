@@ -1,4 +1,11 @@
 Exam
+02/08/2022
+
+
+Online boutique
+https://github.com/GoogleCloudPlatform/microservices-demo/tree/main/src/frontend
+
+
 31/07/2022
 
 
@@ -20,8 +27,8 @@ Which one of these options is the Azure infrastructure-as-a code solution?
 Azure Resource Manager
 
 
-Azure load balancer = L4
-AGIC give up TLS
+https://docs.microsoft.com/en-us/azure/aks/configure-kubenet
+
 
 
 
