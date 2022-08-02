@@ -1,0 +1,113 @@
+ExamUnknown
+02/08/2022
+
+
+Section 1
+After deploying an HTTP workload in your cluster, which Kubernetes service or services are able to control traffic at the application level?
+X	Ingress controller
+  	NodePort
+	LoadBalancer
+	Application Gateway Ingress Controller
+
+
+Which service or services can expose a workload to the outside of a cluster?
+X	NodePort	
+	ClusterIP
+X	LoadBalancer	
+X	Ingress Controller
+
+
+Which of these Azure services can add end-to-end TLS security for HTTP workloads?
+	Azure load balancers
+	Azure network security rules
+	Application Gateway Ingress Controller
+X	Azure HTTP application routing 
+
+
+
+Section 2
+Which of the following are correct statements about an AKS cluster configured with Kubenet?
+	When using Kubenet an encapsulation technology is used to send packets between participating nodes.
+	When using Kubenet Layer 3 routing is used to send packets participating between nodes.
+	When using Kubenet you can add Windows node pools to your cluster.
+X	When using Kubenet you can't add Windows node pools to your cluster.
+
+
+Which of the following statements are true for an AKS cluster configured with the Kubenet network plugin?
+X	An additional hop is added in order to establish communication between the Azure infrastructure and cluster internal workloads.
+	Only the routing required for the first pool is automatically added. Additional pools should be declared using user-defined routes.
+X	Routes are automatically added; there is no need to add user-defined routes.
+	An overlay is added in order to establish communication between the Azure infrastructure and cluster internal workloads.
+
+
+
+
+Which of the following are correct statements about an AKS cluster configured with Kubenet?
+When using Kubenet Layer 3 routing is used to send packets participating between nodes.
+
+
+
+Which of the following statements are true for an AKS cluster configured with the Kubenet network plugin?
+Routes are automatically added; there is no need to add user-defined routes.
+
+
+
+Which of these options are recommended to secure a Kubernetes cluster inside Azure?
+	Network security group
+	Network security rule
+X	Kubernetes network policy
+X	Global network policy
+X	Calico network policy
+
+
+Section 3
+Which one of these components directly affects the health of the participating worker nodes in a cluster?
+X	calico-node container
+	Calico API Server container
+	Calico operator container
+	None
+
+
+Which scaling model is best for leveraging the full power of cloud computing?
+	Maunal scaling
+X	Automatic scaling
+
+
+In an AKS BYOCNI cluster when Calico is installed resouces can use the ippool "natoutgoing" option to communicate with the Internet. What is required if you wish to disable "natoutgoing" and provide a dedicated Public IP for workloads?
+	VXLAN encapsulation
+	IP-IP encapsulation
+X	User-defined routes
+
+
+Section 4
+What is the Azure cluster identity, and what type of secret does it represent?
+	CRD
+X	Service principal
+	Client ID
+	Tenant ID
+
+
+Which one of these configurations allows an administrator to limit Cluster API Azure provider capabilities?
+	Application ID
+	Tenant ID
+	Subscription IO
+X	Cluster identity name
+
+
+Which of the following are advantages of Calico's Istio service mesh integration?
+	It supports Azure security group policies
+	It supports Kubernetes and Calico Policy
+X	It supports identity based authentication using mTLS
+X	It supports application layer policy
+
+
+Which of the following options are required to enable application-layer policy with Calico and Istio?
+X	A Kubernetes cluster
+X	kubectl
+	clusterctl
+X	Istio
+
+
+What happens after executing the following command?
+	clusterctl starts the deployment process
+X	clusterctl outputs the necessary resources for a deployment
