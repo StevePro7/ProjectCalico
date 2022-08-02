@@ -16,6 +16,9 @@ https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
 Note: A contributor role can not grant access to others.
 
 
+clusterctl generate cluster
+https://cluster-api.sigs.k8s.io/clusterctl/commands/generate-cluster.html
+
 31/07/2022
 
 

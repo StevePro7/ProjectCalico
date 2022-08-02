@@ -30,6 +30,8 @@ kubectl cluster-info dump | epgre -i 'PodCIDR"'
 
 
 Kubenet Routing
+Kubenet uses User Defined Routing to establish connections between cluster resources that are hosted in different nodes.
+
 kubectl get installations default -o jsonpath="{.spec.calicoNetwork}" | jq
 
 az network route-table list -o table
