@@ -6,6 +6,16 @@ Online boutique
 https://github.com/GoogleCloudPlatform/microservices-demo/tree/main/src/frontend
 
 
+By default WireGuard implements Node to Node encryption.
+
+
+
+https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles
+
+
+Note: A contributor role can not grant access to others.
+
+
 31/07/2022
 
 
@@ -34,6 +44,14 @@ https://docs.microsoft.com/en-us/azure/aks/configure-kubenet
 Calico eBPF comms directly to K8s API server
 https://projectcalico.docs.tigera.io/maintenance/ebpf/enabling-ebpf#configure-calico-to-talk-directly-to-the-api-server
 
+
+calico default network policy
+default deny
+
+
+BYOC AKS cluster w/ Calico
+https://awstip.com/aks-deployment-azure-cni-with-calico-cni-cncf-roadmap-7fc5c7c48a1b
+disabled, VXLAN
 
 
 Which one of these options can be used to communicate directly with the workload's private IP and bypass kube-proxy pods?
